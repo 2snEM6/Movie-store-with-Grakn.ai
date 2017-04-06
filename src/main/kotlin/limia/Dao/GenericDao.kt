@@ -1,6 +1,6 @@
 package limia.Dao
 
-import limia.Interface.IDao
+import limia.Dao.IGenericDao
 import java.lang.reflect.ParameterizedType
 
 
@@ -8,11 +8,9 @@ import java.lang.reflect.ParameterizedType
 /**
  * Created by workstation on 05/04/2017.
  */
-abstract class Dao<T> : IDao<T> {
+abstract class GenericDao<T> : IGenericDao<T> {
 
-    var uri: String? = null
     private var type: Class<T>? = null
-
 
     override fun create(t: T): T {
         TODO("not implemented") //To change body of created functions use File | Settings | File Templates.

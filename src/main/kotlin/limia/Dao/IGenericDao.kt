@@ -1,9 +1,9 @@
-package limia.Interface
+package limia.Dao
 
 /**
  * Created by workstation on 05/04/2017.
  */
-interface IDao<T> {
+interface IGenericDao<T> {
 
     fun create(t: T): T
 

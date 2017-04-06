@@ -1,0 +1,32 @@
+insert
+
+    # Entities
+
+    user sub entity
+        has-resource name
+        has-resource email
+        has-resource surname
+        plays-role favorited_a;
+
+    movie sub entity
+        has-resource themoviedb_id
+        plays-role is_favorited_by;
+
+    # Resources
+
+    name sub resource datatype string;
+    email sub resource datatype string;
+    surname sub resource datatype string;
+    themoviedb_id sub resource datatype string;
+    date sub resource datatype string;
+
+
+    # Roles and Relations
+
+    favorite sub relation
+        has-role favorited_a
+        has-role is_favorited_by
+        has-resource date;
+
+    favorited_a sub role;
+    is_favorited_by sub role;

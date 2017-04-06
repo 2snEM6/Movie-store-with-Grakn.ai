@@ -1,5 +1,43 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <module org.jetbrains.idea.maven.project.MavenProjectsManager.isMavenModule="true" type="JAVA_MODULE" version="4">
+  <component name="FacetManager">
+    <facet type="kotlin-language" name="Kotlin">
+      <configuration version="1">
+        <option name="compilerInfo">
+          <KotlinCompilerInfo>
+            <option name="compilerSettings">
+              <CompilerSettings />
+            </option>
+            <option name="k2jsCompilerArguments">
+              <K2JSCompilerArguments />
+            </option>
+            <option name="k2jvmCompilerArguments">
+              <K2JVMCompilerArguments />
+            </option>
+            <option name="_commonCompilerArguments">
+              <DummyImpl>
+                <option name="pluginClasspaths">
+                  <array />
+                </option>
+                <option name="coroutinesWarn" value="true" />
+                <option name="pluginOptions">
+                  <array />
+                </option>
+              </DummyImpl>
+            </option>
+          </KotlinCompilerInfo>
+        </option>
+        <option name="useProjectSettings" value="false" />
+        <option name="versionInfo">
+          <KotlinVersionInfo>
+            <option name="apiLevel" value="1.0" />
+            <option name="languageLevel" value="1.0" />
+            <option name="targetPlatformName" value="JVM 1.6" />
+          </KotlinVersionInfo>
+        </option>
+      </configuration>
+    </facet>
+  </component>
   <component name="NewModuleRootManager" LANGUAGE_LEVEL="JDK_1_5" inherit-compiler-output="false">
     <output url="file://$MODULE_DIR$/target/classes" />
     <output-test url="file://$MODULE_DIR$/target/test-classes" />
@@ -10,6 +48,35 @@
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
+    <orderEntry type="library" name="Maven: ai.grakn:grakn-graph:0.11.0" level="project" />
+    <orderEntry type="library" name="Maven: org.json:json:20160212" level="project" />
+    <orderEntry type="library" name="Maven: ai.grakn:grakn-core:0.11.0" level="project" />
+    <orderEntry type="library" name="Maven: org.apache.tinkerpop:gremlin-core:3.1.1-incubating" level="project" />
+    <orderEntry type="library" name="Maven: org.apache.tinkerpop:gremlin-shaded:3.1.1-incubating" level="project" />
+    <orderEntry type="library" name="Maven: commons-configuration:commons-configuration:1.10" level="project" />
+    <orderEntry type="library" name="Maven: commons-lang:commons-lang:2.6" level="project" />
+    <orderEntry type="library" name="Maven: org.yaml:snakeyaml:1.15" level="project" />
+    <orderEntry type="library" name="Maven: com.carrotsearch:hppc:0.7.1" level="project" />
+    <orderEntry type="library" name="Maven: com.jcabi:jcabi-manifests:1.1" level="project" />
+    <orderEntry type="library" name="Maven: com.jcabi:jcabi-log:0.14" level="project" />
+    <orderEntry type="library" name="Maven: org.slf4j:jcl-over-slf4j:1.7.12" level="project" />
+    <orderEntry type="library" name="Maven: org.apache.tinkerpop:tinkergraph-gremlin:3.1.1-incubating" level="project" />
+    <orderEntry type="library" name="Maven: ai.grakn:grakn-graql:0.11.0" level="project" />
+    <orderEntry type="library" name="Maven: org.antlr:antlr4-runtime:4.5" level="project" />
+    <orderEntry type="library" name="Maven: org.abego.treelayout:org.abego.treelayout.core:1.0.1" level="project" />
+    <orderEntry type="library" name="Maven: org.sharegov:mjson:1.4.0" level="project" />
+    <orderEntry type="library" name="Maven: org.javatuples:javatuples:1.2" level="project" />
+    <orderEntry type="library" name="Maven: com.theoryinpractise:halbuilder-standard:4.0.1" level="project" />
+    <orderEntry type="library" name="Maven: com.theoryinpractise:halbuilder-api:4.0.1" level="project" />
+    <orderEntry type="library" name="Maven: com.theoryinpractise:halbuilder-core:4.0.6" level="project" />
+    <orderEntry type="library" name="Maven: com.google.code.findbugs:jsr305:3.0.0" level="project" />
+    <orderEntry type="library" name="Maven: com.theoryinpractise:halbuilder-json:4.0.6" level="project" />
+    <orderEntry type="library" name="Maven: com.fasterxml.jackson.core:jackson-core:2.8.1" level="project" />
+    <orderEntry type="library" name="Maven: com.fasterxml.jackson.core:jackson-databind:2.8.1" level="project" />
+    <orderEntry type="library" name="Maven: com.fasterxml.jackson.core:jackson-annotations:2.8.0" level="project" />
+    <orderEntry type="library" name="Maven: com.theoryinpractise:halbuilder-xml:4.0.1" level="project" />
+    <orderEntry type="library" name="Maven: org.jdom:jdom:2.0.2" level="project" />
+    <orderEntry type="library" name="Maven: com.google.guava:guava:19.0" level="project" />
     <orderEntry type="library" name="Maven: com.sparkjava:spark-core:2.5.4" level="project" />
     <orderEntry type="library" name="Maven: org.slf4j:slf4j-api:1.7.13" level="project" />
     <orderEntry type="library" name="Maven: org.eclipse.jetty:jetty-server:9.3.6.v20151106" level="project" />
