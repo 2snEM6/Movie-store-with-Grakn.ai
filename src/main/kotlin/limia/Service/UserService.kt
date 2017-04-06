@@ -2,16 +2,16 @@ package limia.Service
 
 import limia.Dao.UserDao
 import limia.Service.IUserService
-import limia.User
+import limia.Dto.User
 
 import java.util.UUID
 
 /**
  * Created by workstation on 05/04/2017.
  */
-class UserService : IUserService {
+class UserService() : IUserService {
 
-    private val dao: UserDao? = null
+    private var dao: UserDao? = null
 
     override fun create(name: String, email: String) {
         val user = User(name, email, UUID.randomUUID().toString())
@@ -28,5 +28,9 @@ class UserService : IUserService {
 
     override fun delete(id: String) {
         dao!!.delete(id)
+    }
+
+    init {
+        dao = UserDao()
     }
 }

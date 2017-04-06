@@ -1,10 +1,14 @@
 package limia.Connection;
 
+import ai.grakn.Grakn;
+import ai.grakn.GraknGraph;
+
 /**
  * Created by workstation on 06/04/2017.
  */
 public class Connection {
-    public static Connection instance; // Singleton pattern
+    private static Connection instance; // Singleton pattern
+    private GraknGraph graph;
 
     private Connection(){
         // DB Driver and connect to the DB
@@ -12,16 +16,21 @@ public class Connection {
 
     public synchronized static Connection getInstance() {
         if (instance == null) {
-            return new Connection();
+            instance = new Connection();
+            return instance;
         }
         return instance;
     }
 
     public void open() {
-        // Open connection
+        graph = Grakn.factory(Grakn.IN_MEMORY, "moviestore").getGraph();
     }
 
     public void close() {
-        // Close connection
+        graph = null;
+    }
+
+    public GraknGraph getGraph() {
+        return graph;
     }
 }
