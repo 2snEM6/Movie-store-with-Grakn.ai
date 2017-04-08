@@ -16,7 +16,7 @@ public class WebServerManager {
         System.out.println(String.format("Starting web server on port %s",port));
     }
 
-    public static void registerRoutes(RoutingService routingService) {
+    public static void registerRoutingService(RoutingService routingService) {
         routingService.initializeRoutes();
     }
 

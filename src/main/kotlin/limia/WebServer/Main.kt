@@ -16,9 +16,9 @@ object Main {
     @JvmStatic fun main(args: Array<String>) {
         DBConnection.getInstance().load()
         WebServerManager.start(4568)
-        WebServerManager.registerRoutes(UserRoutingService())
-        WebServerManager.registerRoutes(RelationRoutingService())
-        WebServerManager.registerRoutes(MovieRoutingService())
+        WebServerManager.registerRoutingService(UserRoutingService())
+        WebServerManager.registerRoutingService(RelationRoutingService())
+        WebServerManager.registerRoutingService(MovieRoutingService())
         WebServerManager.enableGlobalFilters();
     }
 

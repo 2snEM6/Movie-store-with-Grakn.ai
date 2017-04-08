@@ -20,7 +20,12 @@ class RelationRoutingService : RoutingService<Relation>(), IRoutingService<Relat
     override fun initializeRoutes() {
         post("/*/:id0/*/:id1") { request, response ->
             val relation = relationController.createRelation(request)
-            gson.toJson(Response(201, "Relation created", relation))
+            var jsonBody : String?
+            if (relation != null)
+                jsonBody = gson.toJson(Response(201, "Relation created", relation))
+            else jsonBody = gson.toJson(Response(404, "Error creating the relation. Check the availability " +
+                    "of the entity identifiers", null))
+            jsonBody
         }
     }
 }
