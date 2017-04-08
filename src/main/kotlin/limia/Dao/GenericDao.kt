@@ -19,7 +19,8 @@ abstract class GenericDao<T>() : IGenericDao<T> {
     }
 
     override fun update(t: T): T {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        return entityManager!!.update(t)
+        //To change body of created functions use File | Settings | File Templates.
     }
 
     override fun read(id: Any): T {
@@ -27,7 +28,7 @@ abstract class GenericDao<T>() : IGenericDao<T> {
     }
 
     override fun delete(id: Any) {
-        TODO("not implemented")
+        entityManager!!.delete(type, id)
     }
 
     init {

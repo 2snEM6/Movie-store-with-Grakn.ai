@@ -6,11 +6,14 @@ insert
         has-resource name
         has-resource email
         has-resource identifier
-        plays-role favorited_a;
+        plays-role favorited_a
+        plays-role downloaded_a;
 
     movie sub entity
         has-resource themoviedb_id
-        plays-role is_favorited_by;
+        has-resource identifier
+        plays-role is_favorited_by
+        plays-role is_downloaded_by;
 
     # Resources
 
@@ -29,5 +32,12 @@ insert
         has-role is_favorited_by
         has-resource date;
 
+    download sub relation
+        has-role downloaded_a
+        has-role is_downloaded_by
+        has-resource date;
+
     favorited_a sub role;
     is_favorited_by sub role;
+    downloaded_a sub role;
+    is_downloaded_by sub role;

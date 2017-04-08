@@ -14,5 +14,5 @@ class User {
         this.identifier = identifier
     }
 
-    constructor() {}
+    constructor()
 }
