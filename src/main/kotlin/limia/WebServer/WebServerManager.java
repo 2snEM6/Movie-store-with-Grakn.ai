@@ -1,9 +1,10 @@
 package limia.WebServer;
 
+import com.google.gson.Gson;
 import limia.Routing.RoutingService;
+import spark.Filter;
 
-import static spark.Spark.awaitInitialization;
-import static spark.Spark.port;
+import static spark.Spark.*;
 
 /**
  * Created by macbook on 8/4/17.
@@ -17,5 +18,13 @@ public class WebServerManager {
 
     public static void registerRoutes(RoutingService routingService) {
         routingService.initializeRoutes();
+    }
+
+    public static void enableGlobalFilters() {
+        before((req, res) -> {
+            res.type("application/json");
+            res.status(200);
+        });
+
     }
 }

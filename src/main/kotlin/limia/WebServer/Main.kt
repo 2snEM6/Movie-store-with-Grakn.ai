@@ -1,7 +1,6 @@
-package limia
+package limia.WebServer
 
 import limia.Connection.DBConnection
-import limia.Dto.User
 import limia.Service.UserService
 import limia.WebServer.WebServerManager
 import limia.Routing.UserRoutingService
@@ -15,6 +14,7 @@ object Main {
         DBConnection.getInstance().load()
         WebServerManager.start(4568)
         WebServerManager.registerRoutes(UserRoutingService())
+        WebServerManager.enableGlobalFilters();
     }
 
 

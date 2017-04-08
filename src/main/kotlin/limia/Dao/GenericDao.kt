@@ -15,8 +15,7 @@ abstract class GenericDao<T>() : IGenericDao<T> {
     private var entityManager: EntityManager? = null
 
     override fun create(t: T): T {
-        entityManager!!.persist(t)
-        return t
+        return entityManager!!.persist(t)
     }
 
     override fun update(t: T): T {
@@ -24,7 +23,7 @@ abstract class GenericDao<T>() : IGenericDao<T> {
     }
 
     override fun read(id: Any): T {
-        TODO("not implemented")
+        return entityManager!!.read(type, id)
     }
 
     override fun delete(id: Any) {

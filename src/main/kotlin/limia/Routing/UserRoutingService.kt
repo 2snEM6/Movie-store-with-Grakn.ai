@@ -1,7 +1,9 @@
 package limia.Routing
 
+import com.google.gson.Gson
 import limia.Controller.UserController
 import limia.Dto.User
+import limia.Response.Response
 import spark.Spark.*
 
 
@@ -21,14 +23,19 @@ class UserRoutingService : RoutingService<User>(), IRoutingService<User> {
 
         path("/users") {
             post("") { req, res ->
-                userController?.createUser(req);
+                var user = userController?.createUser(req)
                 res.status(201)
-                "User created"
+                gson.toJson(Response(201, "User created",user))
             }
 
             get("/:id") { req, res ->
-                userController?.
+                var user = userController?.findUser(req)
+                gson.toJson(Response(201,null,user))
             }
+
+            /*get("/:id") { req, res ->
+                userController?.
+            }*/
         }
     }
 }

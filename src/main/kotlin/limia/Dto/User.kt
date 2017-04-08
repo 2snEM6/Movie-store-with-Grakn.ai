@@ -1,9 +1,18 @@
 package limia.Dto
 
 /**
- * Created by workstation on 05/04/2017.
+ * Created by macbook on 8/4/17.
  */
-data class User(val name: String?, val email: String?, val id: String?) {
-    constructor() : this(null, null, null)
+class User {
+    var name: String? = null
+    var email: String? = null
+    var identifier: String? = null
 
+    constructor(name: String, email: String, identifier: String) {
+        this.name = name
+        this.email = email
+        this.identifier = identifier
+    }
+
+    constructor() {}
 }
