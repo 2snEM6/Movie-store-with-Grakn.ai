@@ -5,7 +5,7 @@ insert
     user sub entity
         has-resource name
         has-resource email
-        has-resource surname
+        has-resource identifier
         plays-role favorited_a;
 
     movie sub entity
@@ -17,6 +17,7 @@ insert
     name sub resource datatype string;
     email sub resource datatype string;
     surname sub resource datatype string;
+    identifier sub resource datatype string;
     themoviedb_id sub resource datatype string;
     date sub resource datatype string;
 

@@ -1,8 +1,10 @@
 package limia
 
-import limia.Connection.Connection
+import limia.Connection.DBConnection
 import limia.Dto.User
 import limia.Service.UserService
+import limia.WebServer.WebServerManager
+import limia.Routing.UserRoutingService
 
 /**
  * Created by workstation on 07/04/2017.
@@ -10,9 +12,11 @@ import limia.Service.UserService
 object Main {
 
     @JvmStatic fun main(args: Array<String>) {
-        Connection.getInstance().open()
-        val userService : UserService = UserService()
-        userService.create("Daniel Limia Aspas", "limiaspasdaniel@gmail.com")
+        DBConnection.getInstance().load()
+        WebServerManager.start(4568)
+        WebServerManager.registerRoutes(UserRoutingService())
     }
+
+
 
 }
