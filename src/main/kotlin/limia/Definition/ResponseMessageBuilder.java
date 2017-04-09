@@ -44,4 +44,22 @@ public class ResponseMessageBuilder {
         }
         return "Error " + verb + " the " + t.getSimpleName();
     }
+
+    public static String NOT_FOUND(Class t, CRUD crud) {
+        String message = null;
+        switch (crud) {
+            case READ:
+                message = t.getSimpleName() + " not found";
+        }
+        return message;
+    }
+
+    public static String NOT_FOUND_ALL(Class t, CRUD crud) {
+        String message = null;
+        switch (crud) {
+            case READ:
+                message = t.getSimpleName() + "s" + " not found";
+        }
+        return message;
+    }
 }

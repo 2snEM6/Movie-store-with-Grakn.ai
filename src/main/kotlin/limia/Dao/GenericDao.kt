@@ -35,6 +35,10 @@ abstract class GenericDao<T>() : IGenericDao<T> {
         return graknEntityManager!!.readAll(type)
     }
 
+    override fun readAllSpecificRelations(t: T) : ArrayList<T> {
+        return graknEntityManager!!.readAllSpecificRelations(t)
+    }
+
     init {
         graknEntityManager = GraknEntityManager()
         val t = javaClass.genericSuperclass

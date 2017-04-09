@@ -4,11 +4,10 @@ import limia.Controller.MovieController
 import limia.Controller.RelationController
 import limia.Controller.UserController
 import limia.Definition.GlobalConstants
-import limia.Definition.ResponseMessageBuilder.CREATE
-import limia.Definition.ResponseMessageBuilder.ERROR
 import limia.Dto.Relation
 import limia.Response.Response
 import limia.Definition.GlobalConstants.CRUD.*;
+import limia.Definition.ResponseMessageBuilder.*
 import spark.Spark.get
 
 import spark.Spark.post
@@ -29,6 +28,15 @@ class RelationRoutingService : RoutingService<Relation>(), IRoutingService<Relat
             if (relation != null)
                 jsonBody = gson.toJson(Response(201, CREATE(type), relation))
             else jsonBody = gson.toJson(Response(404, ERROR(type,CREATE), null))
+            jsonBody
+        }
+
+        get("/relations/:name") { request, response ->
+            val relations = relationController.findAllRelationsByName(request)
+            var jsonBody : String?
+            if (relations.isEmpty())
+                jsonBody = gson.toJson(Response(404, NOT_FOUND_ALL(type, READ),null))
+            else jsonBody = gson.toJson(Response(200, READ_ALL(type), relations))
             jsonBody
         }
     }

@@ -6,6 +6,7 @@ import limia.Service.MovieService
 import limia.Service.RelationService
 import limia.Service.UserService
 import spark.Request
+import java.util.*
 
 /**
  * Created by macbook on 8/4/17.
@@ -38,8 +39,12 @@ class RelationController {
         return null
     }
 
-    fun findRelation(request: Request): Relation {
-        TODO("Not yet implemented")
+    fun findAllRelationsByName(request: Request): ArrayList<Relation> {
+        val relationName = request.params(":name")
+        if (relationName.equals("download")) {
+            return relationService.readAllOfSpecificType(relationName)
+        }
+        return ArrayList()
     }
 
     fun deleteRelation(request: Request) {

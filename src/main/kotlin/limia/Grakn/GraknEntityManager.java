@@ -3,6 +3,8 @@ package limia.Grakn;
 import ai.grakn.GraknGraph;
 import ai.grakn.concept.Concept;
 import ai.grakn.concept.Entity;
+import ai.grakn.concept.Instance;
+import ai.grakn.concept.RoleType;
 import ai.grakn.exception.GraknValidationException;
 import ai.grakn.graql.InsertQuery;
 import ai.grakn.graql.MatchQuery;
@@ -13,9 +15,6 @@ import limia.Dto.Movie;
 import limia.Dto.Relation;
 import limia.Dto.User;
 
-import java.lang.reflect.Field;
-import java.lang.reflect.ParameterizedType;
-import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Map;
@@ -190,5 +189,43 @@ public class GraknEntityManager {
         }
         DBConnection.getInstance().close();
         return new ArrayList<>();
+    }
+
+    public <T> ArrayList<T> readAllSpecificRelations(T t) {
+        DBConnection.getInstance().open();
+        if (t instanceof Relation) {
+            String relationName = ((Relation) t).getRelationName();
+            ArrayList<Relation> relations = new ArrayList<>();
+            EntityMapper entityMapperEntity = new EntityMapper(limia.Dto.Entity.class);
+            MatchQuery matchQuery = queryBuilder.match(var("relation").isa(relationName));
+            for (Map<String, Concept> conceptMap : matchQuery) {
+                Relation relation = new Relation();
+                relation.setRelationName(relationName);
+                Map<RoleType, Instance> rolePlayers = conceptMap.get("relation").asRelation().rolePlayers();
+                relation.setIdentifier(conceptMap.get("relation").asRelation().getId().getValue());
+                if (rolePlayers.size() == 2) {
+                    final int[] count = {0};
+                    rolePlayers.forEach((k, v) ->{
+                        String roleType = k.getName().getValue();
+                        String rolePlayerID =
+                                ((limia.Dto.Entity)entityMapperEntity.fromEntity(v.asEntity())).getIdentifier();
+                        if (count[0] == 0) {
+                            relation.setFirstEntityID(rolePlayerID);
+                            relation.setFirstRole(roleType);
+                        }
+                        if (count[0] == 1) {
+                            relation.setSecondEntityID(rolePlayerID);
+                            relation.setSecondRole(roleType);
+                        }
+                        count[0] += 1;
+                    });
+                }
+                relations.add(relation);
+            }
+            DBConnection.getInstance().close();
+            return (ArrayList<T>) relations;
+        }
+        DBConnection.getInstance().close();
+        return new ArrayList<T>();
     }
 }
