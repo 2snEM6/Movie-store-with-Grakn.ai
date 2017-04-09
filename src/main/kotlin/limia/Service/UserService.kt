@@ -3,8 +3,7 @@ package limia.Service
 import limia.Dao.UserDao
 import limia.Dto.User
 import limia.Service.IUserService
-
-import java.util.UUID
+import java.util.*
 
 /**
  * Created by workstation on 05/04/2017.
@@ -28,6 +27,10 @@ class UserService() : IUserService {
 
     override fun delete(id: String) {
         dao!!.delete(id)
+    }
+
+    override fun readAll(): ArrayList<User> {
+        return dao!!.readAll(User::class.java)
     }
 
     init {

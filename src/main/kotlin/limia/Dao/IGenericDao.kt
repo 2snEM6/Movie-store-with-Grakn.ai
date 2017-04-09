@@ -1,5 +1,7 @@
 package limia.Dao
 
+import java.util.*
+
 /**
  * Created by workstation on 05/04/2017.
  */
@@ -12,4 +14,6 @@ interface IGenericDao<T> {
     fun update(t: T): T
 
     fun delete(id: Any)
+
+    fun readAll(type: Class<T>): ArrayList<T>
 }

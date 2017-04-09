@@ -8,6 +8,7 @@ import limia.Definition.ResponseMessageBuilder.*;
 import limia.Dto.User
 import limia.Response.Response
 import spark.Spark.*
+import java.util.*
 
 
 /**
@@ -24,6 +25,12 @@ class UserRoutingService : RoutingService<User>(), IRoutingService<User> {
                 var user = userController?.createUser(req)
                 res.status(201)
                 gson.toJson(Response(201, CREATE(type), user))
+            }
+
+            get("") { req, res ->
+                val users : ArrayList<User> = userController?.readAllUsers()
+                res.status(200)
+                gson.toJson(Response(200, READ_ALL(type), users))
             }
 
             get("/:id") { req, res ->

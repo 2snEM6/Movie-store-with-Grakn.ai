@@ -9,6 +9,7 @@ import limia.Dto.Movie
 import limia.Dto.User
 import limia.Response.Response
 import spark.Spark.*
+import java.util.*
 
 
 /**
@@ -16,9 +17,7 @@ import spark.Spark.*
  */
 class MovieRoutingService : RoutingService<Movie>(), IRoutingService<Movie> {
 
-    private var userController : UserController = UserController()
     private var movieController: MovieController = MovieController()
-    private var relationController: RelationController = RelationController()
 
     override fun initializeRoutes() {
 
@@ -26,6 +25,12 @@ class MovieRoutingService : RoutingService<Movie>(), IRoutingService<Movie> {
             post("") { req, res ->
                 val movie = movieController.createMovie(req)
                 gson.toJson(Response(201, CREATE(type), movie))
+            }
+
+            get("") { req, res ->
+                val movies : ArrayList<Movie> = movieController?.readAllMovies()
+                res.status(200)
+                gson.toJson(Response(200, READ_ALL(type), movies))
             }
 
             get("/:id") { req, res ->

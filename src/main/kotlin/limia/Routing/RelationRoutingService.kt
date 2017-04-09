@@ -9,6 +9,7 @@ import limia.Definition.ResponseMessageBuilder.ERROR
 import limia.Dto.Relation
 import limia.Response.Response
 import limia.Definition.GlobalConstants.CRUD.*;
+import spark.Spark.get
 
 import spark.Spark.post
 

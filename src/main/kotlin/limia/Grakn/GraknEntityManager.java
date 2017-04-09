@@ -1,6 +1,7 @@
 package limia.Grakn;
 
 import ai.grakn.GraknGraph;
+import ai.grakn.concept.Concept;
 import ai.grakn.concept.Entity;
 import ai.grakn.exception.GraknValidationException;
 import ai.grakn.graql.InsertQuery;
@@ -25,15 +26,15 @@ import static ai.grakn.graql.Graql.var;
 /**
  * Created by workstation on 06/04/2017.
  */
-public class EntityManager {
+public class GraknEntityManager {
 
     private QueryBuilder queryBuilder;
     private GraknGraph graknGraph;
 
 
-    public EntityManager() {
+    public GraknEntityManager() {
         graknGraph = DBConnection.getInstance().getGraph();
-        queryBuilder =graknGraph.graql();
+        queryBuilder = graknGraph.graql();
     }
 
     public <T> T persist(T t) {
@@ -60,9 +61,9 @@ public class EntityManager {
             }
             if (t instanceof Relation) {
                 MatchQuery matchQuery = queryBuilder.match(var("first_entity")
-                        .has("identifier", ((Relation) t).getFirstEntityID()),
+                                .has("identifier", ((Relation) t).getFirstEntityID()),
                         var("second_entity")
-                        .has("identifier", ((Relation) t).getSecondEntityID()));
+                                .has("identifier", ((Relation) t).getSecondEntityID()));
                 matchQuery.insert(var()
                         .rel(((Relation) t).getFirstRole(), "first_entity")
                         .rel(((Relation) t).getSecondRole(), "second_entity")
@@ -95,48 +96,48 @@ public class EntityManager {
         DBConnection.getInstance().close();
     }
 
-   public <T> T read(Class<T> type, final Object id) {
-       DBConnection.getInstance().open();
-       try {
-           if (type == User.class) {
-               EntityMapper entityMapper = new EntityMapper<>(User.class);
-               MatchQuery query = queryBuilder.match(
-                       var("user").has("identifier", var("id")),
-                       var("id").value(id)
-               );
-               final boolean[] first = {true};
-               final User[] user = new User[1];
-               query.forEach(k -> {
-                   Entity entity = k.get("user").asEntity();
-                   if (first[0])
-                       user[0] = (User) entityMapper.fromEntity(entity);
-                       first[0] = false;
-               });
-               DBConnection.getInstance().close();
-               return (T) user[0];
-           }
-           if (type == Movie.class) {
-               EntityMapper entityMapper = new EntityMapper<>(Movie.class);
-               MatchQuery query = queryBuilder.match(
-                       var("movie").has("identifier", var("id")),
-                       var("id").value(id)
-               );
-               final boolean[] first = {true};
-               final Movie[] movie = new Movie[1];
-               query.forEach(k -> {
-                   Entity entity = k.get("movie").asEntity();
-                   if (first[0])
-                       movie[0] = (Movie) entityMapper.fromEntity(entity);
-                   first[0] = false;
-               });
-               DBConnection.getInstance().close();
-               return (T) movie[0];
-           }
-       } catch (Exception e) {
-           System.out.println("Unable to read entities");
-       }
-       DBConnection.getInstance().close();
-       return null;
+    public <T> T read(Class<T> type, final Object id) {
+        DBConnection.getInstance().open();
+        try {
+            if (type == User.class) {
+                EntityMapper entityMapper = new EntityMapper<>(User.class);
+                MatchQuery query = queryBuilder.match(
+                        var("user").has("identifier", var("id")),
+                        var("id").value(id)
+                );
+                final boolean[] first = {true};
+                final User[] user = new User[1];
+                query.forEach(k -> {
+                    Entity entity = k.get("user").asEntity();
+                    if (first[0])
+                        user[0] = (User) entityMapper.fromEntity(entity);
+                    first[0] = false;
+                });
+                DBConnection.getInstance().close();
+                return (T) user[0];
+            }
+            if (type == Movie.class) {
+                EntityMapper entityMapper = new EntityMapper<>(Movie.class);
+                MatchQuery query = queryBuilder.match(
+                        var("movie").has("identifier", var("id")),
+                        var("id").value(id)
+                );
+                final boolean[] first = {true};
+                final Movie[] movie = new Movie[1];
+                query.forEach(k -> {
+                    Entity entity = k.get("movie").asEntity();
+                    if (first[0])
+                        movie[0] = (Movie) entityMapper.fromEntity(entity);
+                    first[0] = false;
+                });
+                DBConnection.getInstance().close();
+                return (T) movie[0];
+            }
+        } catch (Exception e) {
+            System.out.println("Unable to read entities");
+        }
+        DBConnection.getInstance().close();
+        return null;
     }
 
     public <T> T update(T t) {
@@ -146,7 +147,7 @@ public class EntityManager {
             id = null;
             if (t instanceof User) {
                 id = ((User) t).getIdentifier();
-                MatchQuery matchQuery = queryBuilder.match(var("user").has("identifier", ((User)t).getIdentifier()));
+                MatchQuery matchQuery = queryBuilder.match(var("user").has("identifier", ((User) t).getIdentifier()));
                 Collection<Var> collection = new ArrayList<>();
                 EntityMapper entityMapper = new EntityMapper<>(User.class);
                 entityMapper.extractNonNullFields(t).forEach((name, value) -> {
@@ -160,6 +161,34 @@ public class EntityManager {
             return null;
         }
         DBConnection.getInstance().close();
-        return this.read((Class<T>) t.getClass(),id); // TODO: 8/4/17 Return the actual updated object when updated
+        return this.read((Class<T>) t.getClass(), id); // TODO: 8/4/17 Return the actual updated object when updated
+    }
+
+    public <T> ArrayList<T> readAll(Class<T> type) {
+        DBConnection.getInstance().open();
+        if (type == User.class) {
+            ArrayList<User> users = new ArrayList<>();
+            EntityMapper entityMapper = new EntityMapper(User.class);
+            MatchQuery matchQuery = queryBuilder.match(var("user").isa("user"));
+            for (Map<String, Concept> conceptMap : matchQuery) {
+                User user = (User) entityMapper.fromEntity(conceptMap.get("user").asEntity());
+                users.add(user );
+            }
+            DBConnection.getInstance().close();
+            return (ArrayList<T>) users;
+        }
+        if (type == Movie.class) {
+            ArrayList<Movie> movies = new ArrayList<>();
+            EntityMapper entityMapper = new EntityMapper(Movie.class);
+            MatchQuery matchQuery = queryBuilder.match(var("movie").isa("movie"));
+            for (Map<String, Concept> conceptMap : matchQuery) {
+                Movie movie = (Movie) entityMapper.fromEntity(conceptMap.get("movie").asEntity());
+                movies.add(movie);
+            }
+            DBConnection.getInstance().close();
+            return (ArrayList<T>) movies;
+        }
+        DBConnection.getInstance().close();
+        return new ArrayList<>();
     }
 }
