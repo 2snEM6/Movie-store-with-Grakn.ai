@@ -38,10 +38,6 @@ class RelationController {
         return null
     }
 
-    /*public static Response updateUser(Request request) {
-
-    }*/
-
     fun findRelation(request: Request): Relation {
         TODO("Not yet implemented")
     }

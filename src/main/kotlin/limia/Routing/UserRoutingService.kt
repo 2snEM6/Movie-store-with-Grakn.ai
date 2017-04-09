@@ -4,6 +4,7 @@ import com.google.gson.Gson
 import limia.Controller.MovieController
 import limia.Controller.RelationController
 import limia.Controller.UserController
+import limia.Definition.ResponseMessageBuilder.*;
 import limia.Dto.User
 import limia.Response.Response
 import spark.Spark.*
@@ -14,9 +15,7 @@ import spark.Spark.*
  */
 class UserRoutingService : RoutingService<User>(), IRoutingService<User> {
 
-    private var userController : UserController = UserController()
-    private var movieController: MovieController = MovieController()
-    private var relationController: RelationController = RelationController()
+    private var userController: UserController = UserController()
 
     override fun initializeRoutes() {
 
@@ -24,22 +23,22 @@ class UserRoutingService : RoutingService<User>(), IRoutingService<User> {
             post("") { req, res ->
                 var user = userController?.createUser(req)
                 res.status(201)
-                gson.toJson(Response(201, "User created",user))
+                gson.toJson(Response(201, CREATE(type), user))
             }
 
             get("/:id") { req, res ->
                 var user = userController?.findUser(req)
-                gson.toJson(Response(200,null,user))
+                gson.toJson(Response(200, READ(type), user))
             }
 
             put("/:id") { req, res ->
                 userController?.updateUser(req)
-                gson.toJson(Response(200,"User updated",null))
+                gson.toJson(Response(200, UPDATE(type), null))
             }
 
             delete("/:id") { req, res ->
                 userController?.deleteUser(req)
-                gson.toJson(Response(200,"User deleted",null))
+                gson.toJson(Response(200, DELETE(type), null))
             }
         }
     }

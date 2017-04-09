@@ -9,17 +9,13 @@ import spark.Request
  */
 class UserController {
 
-    private val userService: UserService
+    private val userService: UserService = UserService()
 
     fun createUser(request: Request): User {
         val name = request.queryParams("name")
         val email = request.queryParams("email")
         return userService.create(name, email)
     }
-
-    /*public static Response updateUser(Request request) {
-
-    }*/
 
     fun findUser(request: Request): User {
         return userService.read(request.params(":id"))
@@ -30,7 +26,6 @@ class UserController {
     }
 
     fun updateUser(request: Request) {
-
         val user = User()
         if (request.queryParams().contains("name")) user.name = request.queryParams("name")
         if (request.queryParams().contains("email")) user.email = request.queryParams("email")
@@ -38,7 +33,4 @@ class UserController {
         userService.update(user)
     }
 
-    init {
-        userService = UserService()
-    }
 }

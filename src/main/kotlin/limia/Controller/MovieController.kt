@@ -18,10 +18,6 @@ class MovieController {
         return movieService.create(themoviedb_id)
     }
 
-    /*public static Response updateUser(Request request) {
-
-    }*/
-
     fun findMovie(request: Request): Movie {
         return movieService.read(request.params(":id"))
     }
@@ -31,7 +27,6 @@ class MovieController {
     }
 
     fun updateMovie(request: Request) {
-
         val movie = Movie()
         if (request.queryParams().contains("themoviedb_id")) movie.themoviedb_id = request.queryParams("themoviedb_id")
         movie.identifier = request.params(":id")

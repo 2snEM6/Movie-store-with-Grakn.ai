@@ -4,6 +4,7 @@ import com.google.gson.Gson
 import limia.Controller.MovieController
 import limia.Controller.RelationController
 import limia.Controller.UserController
+import limia.Definition.ResponseMessageBuilder.*
 import limia.Dto.Movie
 import limia.Dto.User
 import limia.Response.Response
@@ -24,12 +25,12 @@ class MovieRoutingService : RoutingService<Movie>(), IRoutingService<Movie> {
         path("/movies") {
             post("") { req, res ->
                 val movie = movieController.createMovie(req)
-                gson.toJson(Response(201, "Movie created", movie))
+                gson.toJson(Response(201, CREATE(type), movie))
             }
 
             get("/:id") { req, res ->
                 val movie = movieController.findMovie(req)
-                gson.toJson(Response(200, null, movie))
+                gson.toJson(Response(200, READ(type), movie))
             }
 
             put("/:id") { req, res ->
@@ -38,7 +39,7 @@ class MovieRoutingService : RoutingService<Movie>(), IRoutingService<Movie> {
 
             delete("/:id") { req, res ->
                 movieController.deleteMovie(req)
-                gson.toJson(Response(401, "Movie deleted", null))
+                gson.toJson(Response(401, UPDATE(type), null))
             }
         }
     }

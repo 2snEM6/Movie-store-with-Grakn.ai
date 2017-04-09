@@ -3,8 +3,12 @@ package limia.Routing
 import limia.Controller.MovieController
 import limia.Controller.RelationController
 import limia.Controller.UserController
+import limia.Definition.GlobalConstants
+import limia.Definition.ResponseMessageBuilder.CREATE
+import limia.Definition.ResponseMessageBuilder.ERROR
 import limia.Dto.Relation
 import limia.Response.Response
+import limia.Definition.GlobalConstants.CRUD.*;
 
 import spark.Spark.post
 
@@ -22,9 +26,8 @@ class RelationRoutingService : RoutingService<Relation>(), IRoutingService<Relat
             val relation = relationController.createRelation(request)
             var jsonBody : String?
             if (relation != null)
-                jsonBody = gson.toJson(Response(201, "Relation created", relation))
-            else jsonBody = gson.toJson(Response(404, "Error creating the relation. Check the availability " +
-                    "of the entity identifiers", null))
+                jsonBody = gson.toJson(Response(201, CREATE(type), relation))
+            else jsonBody = gson.toJson(Response(404, ERROR(type,CREATE), null))
             jsonBody
         }
     }
