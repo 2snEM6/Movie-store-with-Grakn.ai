@@ -36,6 +36,22 @@ public class GraknEntityManager {
         queryBuilder = graknGraph.graql();
     }
 
+    public boolean exists(Class type, final Object id) {
+        if (type == User.class) {
+            User user = read(User.class, id);
+            return user != null;
+        }
+        if (type == Movie.class) {
+            Movie movie = read(Movie.class, id);
+            return movie != null;
+        }
+        if (type == Relation.class) {
+            Relation relation = read(Relation.class, id);
+            return relation != null;
+        }
+        return false;
+    }
+
     public <T> T persist(T t) {
         DBConnection.getInstance().open();
         try {

@@ -7,6 +7,7 @@ import limia.Controller.UserController
 import limia.Definition.ResponseMessageBuilder.*
 import limia.Dto.Movie
 import limia.Dto.User
+import limia.Exception.EntityAlreadyExistsException
 import limia.Response.Response
 import spark.Spark.*
 import java.util.*
@@ -23,8 +24,18 @@ class MovieRoutingService : RoutingService<Movie>(), IRoutingService<Movie> {
 
         path("/movies") {
             post("") { req, res ->
-                val movie = movieController.createMovie(req)
-                gson.toJson(Response(201, CREATE(type), movie))
+                var movie: Movie? = null
+                var alreadyExists = false;
+                try {
+                    movie = movieController.createMovie(req)
+                } catch(e: EntityAlreadyExistsException) {
+                    alreadyExists = true;
+                }
+                if (!alreadyExists)
+                    gson.toJson(Response(201, CREATE(type), movie))
+                else
+                    gson.toJson(Response(409, ALREADY_EXISTS(type), null))
+
             }
 
             get("") { req, res ->
@@ -44,7 +55,7 @@ class MovieRoutingService : RoutingService<Movie>(), IRoutingService<Movie> {
 
             delete("/:id") { req, res ->
                 movieController.deleteMovie(req)
-                gson.toJson(Response(401, UPDATE(type), null))
+                gson.toJson(Response(204, DELETE(type), null))
             }
         }
     }

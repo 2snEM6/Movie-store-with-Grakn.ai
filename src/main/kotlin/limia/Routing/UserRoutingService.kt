@@ -6,6 +6,7 @@ import limia.Controller.RelationController
 import limia.Controller.UserController
 import limia.Definition.ResponseMessageBuilder.*;
 import limia.Dto.User
+import limia.Exception.EntityAlreadyExistsException
 import limia.Response.Response
 import spark.Spark.*
 import java.util.*
@@ -22,14 +23,21 @@ class UserRoutingService : RoutingService<User>(), IRoutingService<User> {
 
         path("/users") {
             post("") { req, res ->
-                var user = userController?.createUser(req)
-                res.status(201)
-                gson.toJson(Response(201, CREATE(type), user))
+                var user: User? = null
+                var alreadyExists = false;
+                try {
+                    user = userController?.createUser(req)
+                } catch(e: EntityAlreadyExistsException) {
+                   alreadyExists = true;
+                }
+                if (!alreadyExists)
+                    gson.toJson(Response(201, CREATE(type), user))
+                else
+                    gson.toJson(Response(409, ALREADY_EXISTS(type), null))
             }
 
             get("") { req, res ->
                 val users : ArrayList<User> = userController?.readAllUsers()
-                res.status(200)
                 gson.toJson(Response(200, READ_ALL(type), users))
             }
 
@@ -45,7 +53,7 @@ class UserRoutingService : RoutingService<User>(), IRoutingService<User> {
 
             delete("/:id") { req, res ->
                 userController?.deleteUser(req)
-                gson.toJson(Response(200, DELETE(type), null))
+                gson.toJson(Response(204, DELETE(type), null))
             }
         }
     }

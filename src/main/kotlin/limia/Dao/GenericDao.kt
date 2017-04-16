@@ -1,6 +1,8 @@
 package limia.Dao
 
 import limia.Dao.IGenericDao
+import limia.Dto.Entity
+import limia.Exception.EntityAlreadyExistsException
 import limia.Grakn.GraknEntityManager
 import java.lang.reflect.ParameterizedType
 import java.util.*
@@ -14,8 +16,13 @@ abstract class GenericDao<T>() : IGenericDao<T> {
     private var type: Class<T>? = null
     private var graknEntityManager: GraknEntityManager? = null
 
+    @Throws(EntityAlreadyExistsException::class)
     override fun create(t: T): T {
-        return graknEntityManager!!.persist(t)
+        val e = t as Entity
+        if (graknEntityManager!!.exists(t.javaClass, e.identifier))
+            return graknEntityManager!!.persist(t)
+        else
+            throw EntityAlreadyExistsException()
     }
 
     override fun update(t: T): T {

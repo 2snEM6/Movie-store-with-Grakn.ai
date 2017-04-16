@@ -2,6 +2,7 @@ package limia.Controller
 
 import limia.Dto.Movie
 import limia.Dto.User
+import limia.Exception.EntityAlreadyExistsException
 import limia.Service.MovieService
 import limia.Service.UserService
 import spark.Request
@@ -14,6 +15,7 @@ class MovieController {
 
     private val movieService: MovieService = MovieService()
 
+    @Throws(EntityAlreadyExistsException::class)
     fun createMovie(request: Request): Movie {
         val themoviedb_id = request.queryParams("themoviedb_id")
         return movieService.create(themoviedb_id)

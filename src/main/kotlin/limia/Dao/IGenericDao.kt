@@ -7,7 +7,7 @@ import java.util.*
  */
 interface IGenericDao<T> {
 
-    fun create(t: T): T
+    fun create(t: T): T?
 
     fun read(id: Any): T
 

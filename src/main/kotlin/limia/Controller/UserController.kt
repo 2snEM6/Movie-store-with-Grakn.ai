@@ -1,6 +1,7 @@
 package limia.Controller
 
 import limia.Dto.User
+import limia.Exception.EntityAlreadyExistsException
 import limia.Service.UserService
 import spark.Request
 import java.util.*
@@ -12,7 +13,8 @@ class UserController {
 
     private val userService: UserService = UserService()
 
-    fun createUser(request: Request): User {
+    @Throws(EntityAlreadyExistsException::class)
+    fun createUser(request: Request): User? {
         val name = request.queryParams("name")
         val email = request.queryParams("email")
         return userService.create(name, email)

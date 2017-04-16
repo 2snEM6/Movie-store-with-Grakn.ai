@@ -14,8 +14,12 @@ public class ResponseMessageBuilder {
         return t.getSimpleName().concat(" ").concat(CREATE);
     }
 
+    public static String ALREADY_EXISTS(Class t) {
+        return t.getSimpleName().concat(" ").concat(ALREADY_EXISTS);
+    }
+
     public static String DELETE(Class t) {
-        return t.getSimpleName().concat(DELETE);
+        return t.getSimpleName().concat(" ").concat(DELETE);
     }
 
     public static String READ(Class t) {

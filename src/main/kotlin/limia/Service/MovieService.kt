@@ -4,6 +4,7 @@ import limia.Dao.MovieDao
 import limia.Dao.UserDao
 import limia.Dto.Movie
 import limia.Dto.User
+import limia.Exception.EntityAlreadyExistsException
 import limia.Service.IUserService
 import java.util.*
 
@@ -14,8 +15,9 @@ class MovieService() : IMovieService {
 
     private var dao: MovieDao? = null
 
+    @Throws(EntityAlreadyExistsException::class)
     override fun create(themoviedb_id: String): Movie {
-        val movie = Movie(themoviedb_id,UUID.randomUUID().toString())
+        val movie = Movie(UUID.randomUUID().toString(), themoviedb_id)
         return dao!!.create(movie)
     }
 

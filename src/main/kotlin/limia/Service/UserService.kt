@@ -2,6 +2,7 @@ package limia.Service
 
 import limia.Dao.UserDao
 import limia.Dto.User
+import limia.Exception.EntityAlreadyExistsException
 import limia.Service.IUserService
 import java.util.*
 
@@ -12,6 +13,7 @@ class UserService() : IUserService {
 
     private var dao: UserDao? = null
 
+    @Throws(EntityAlreadyExistsException::class)
     override fun create(name: String, email: String): User {
         val user = User(name, email, UUID.randomUUID().toString())
         return dao!!.create(user)

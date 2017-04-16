@@ -1,6 +1,7 @@
 package limia.WebServer
 
 import limia.Connection.DBConnection
+import limia.Routing.HealthRoutingService
 import limia.Routing.MovieRoutingService
 import limia.Routing.RelationRoutingService
 import limia.Service.UserService
@@ -19,6 +20,7 @@ object Main {
         WebServerManager.registerRoutingService(UserRoutingService())
         WebServerManager.registerRoutingService(RelationRoutingService())
         WebServerManager.registerRoutingService(MovieRoutingService())
+        WebServerManager.registerRoutingService(HealthRoutingService())
         WebServerManager.enableGlobalFilters();
     }
 
