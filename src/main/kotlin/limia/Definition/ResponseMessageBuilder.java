@@ -26,6 +26,10 @@ public class ResponseMessageBuilder {
         return t.getSimpleName().concat(" ").concat(READ);
     }
 
+    public static String NOT_FOUND(Class t) {
+        return t.getSimpleName().concat(" ").concat(NOT_FOUND);
+    }
+
     public static String READ_ALL(Class t) {
         return t.getSimpleName().concat("s ").concat(READ);
     }

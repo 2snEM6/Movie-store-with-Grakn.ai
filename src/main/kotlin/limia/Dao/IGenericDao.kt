@@ -1,5 +1,6 @@
 package limia.Dao
 
+import limia.Exception.EntityAlreadyExistsException
 import java.util.*
 
 /**
@@ -18,4 +19,6 @@ interface IGenericDao<T> {
     fun readAll(type: Class<T>): ArrayList<T>
 
     fun readAllSpecificRelations(t: T): ArrayList<T>
+
+    fun existsBy(type: Class<T>, key: String, value: String)
 }

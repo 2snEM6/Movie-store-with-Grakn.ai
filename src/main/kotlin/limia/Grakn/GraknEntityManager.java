@@ -49,7 +49,30 @@ public class GraknEntityManager {
             Relation relation = read(Relation.class, id);
             return relation != null;
         }
+        if (type == Entity.class) {
+            Entity entity = read(Entity.class, id);
+            return entity != null;
+        }
         return false;
+    }
+
+    public <T> T findBy(Class<T> type, final String key, final String value) {
+        DBConnection.getInstance().open();
+        EntityMapper entityMapper = new EntityMapper<>(type);
+        MatchQuery query = queryBuilder.match(
+                var("entity").has(key, var("key")),
+                var("key").value(value)
+        );
+        final boolean[] first = {true};
+        final Object[] object = new Object[1];
+        query.forEach(k -> {
+            Entity entity = k.get("entity").asEntity();
+            if (first[0])
+                object[0] = type.cast(entityMapper.fromEntity(entity));
+            first[0] = false;
+        });
+        DBConnection.getInstance().close();
+        return (T) type.cast(object[0]);
     }
 
     public <T> T persist(T t) {
@@ -114,6 +137,23 @@ public class GraknEntityManager {
     public <T> T read(Class<T> type, final Object id) {
         DBConnection.getInstance().open();
         try {
+            if (type == Entity.class) {
+                EntityMapper entityMapper = new EntityMapper<>(User.class);
+                MatchQuery query = queryBuilder.match(
+                        var("entity").has("identifier", var("id")),
+                        var("id").value(id)
+                );
+                final boolean[] first = {true};
+                final limia.Dto.Entity[] _entity = new limia.Dto.Entity[1];
+                query.forEach(k -> {
+                    Entity entity = k.get("entity").asEntity();
+                    if (first[0])
+                        _entity[0] = (limia.Dto.Entity) entityMapper.fromEntity(entity);
+                    first[0] = false;
+                });
+                DBConnection.getInstance().close();
+                return (T) _entity[0];
+            }
             if (type == User.class) {
                 EntityMapper entityMapper = new EntityMapper<>(User.class);
                 MatchQuery query = queryBuilder.match(

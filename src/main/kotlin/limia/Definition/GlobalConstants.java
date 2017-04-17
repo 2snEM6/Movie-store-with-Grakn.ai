@@ -9,6 +9,7 @@ public class GlobalConstants {
         public static final String READ = "read";
         public static final String UPDATE = "updated";
         public static final String DELETE = "deleted";
+        public static final String NOT_FOUND = "not found";
         public static final String ALREADY_EXISTS = "already exists";
     }
 

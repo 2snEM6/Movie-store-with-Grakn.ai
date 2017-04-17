@@ -5,6 +5,9 @@ import org.junit.Before
 import org.junit.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertNotNull
+import com.github.javafaker.Faker
+import java.util.*
+
 
 /**
  * Created by workstation on 16/04/2017.
@@ -13,8 +16,8 @@ class UserRoutesTest {
 
     val SERVERURL = "http://localhost:4568"
     var userID : String? = null
-    val name = "Daniel"
-    val email = "limiaspasdaniel@gmail.com"
+    var name : String? = null
+    var email : String? = null
 
     @Before
     fun setUp() {
@@ -23,6 +26,9 @@ class UserRoutesTest {
 
     @Test
     fun createUser() {
+        val faker = Faker()
+        name = faker.name().fullName()
+        email = faker.internet().emailAddress()
         val postRequest = Unirest.post(SERVERURL + "/users")
                 .queryString("name", name)
                 .queryString("email", email)
@@ -35,10 +41,24 @@ class UserRoutesTest {
         assertNotNull(jsonObject.getJSONObject("data"))
         assertEquals(jsonObject.getJSONObject("data").getString("name"), name)
         assertEquals(jsonObject.getJSONObject("data").getString("email"), email)
-        assertEquals(jsonObject.getString("message"), "User created")
         assertNotNull(jsonObject.getJSONObject("data").getString("identifier"))
         userID = jsonObject.getJSONObject("data").getString("identifier")
         assertEquals(jsonObject.getString("message"), "User created")
+    }
+
+    @Test
+    fun createExistingUserByEmail() {
+        createUser()
+        val postRequest = Unirest.post(SERVERURL + "/users")
+                .queryString("name", name)
+                .queryString("email", email)
+        val jsonNode = postRequest.asJson()
+        val status = jsonNode.status
+        val jsonObject = jsonNode.body.`object`
+        assertEquals(200, status)
+        assertEquals(409, jsonObject.getInt("code"))
+        assertNotNull(jsonObject)
+        assertEquals(jsonObject.getString("message"), "User already exists")
     }
 
     @Test
@@ -58,6 +78,19 @@ class UserRoutesTest {
     }
 
     @Test
+    fun getNonExistingUser() {
+        val randomID = UUID.randomUUID().toString();
+        val getRequest = Unirest.get(SERVERURL + "/users/" + randomID)
+        val jsonNode = getRequest.asJson()
+        val status = jsonNode.status
+        val jsonObject = jsonNode.body.`object`
+        assertEquals(200, status)
+        assertEquals(404, jsonObject.getInt("code"))
+        assertNotNull(jsonObject)
+        assertEquals(jsonObject.getString("message"), "User not found")
+    }
+
+    @Test
     fun deleteExistingUser() {
         createUser()
         val deleteRequest = Unirest.delete(SERVERURL + "/users/" + userID)
@@ -67,5 +100,17 @@ class UserRoutesTest {
         assertEquals(200, status)
         assertEquals(204, jsonObject.getInt("code"))
         assertEquals("User deleted", jsonObject.getString("message"))
+    }
+
+    @Test
+    fun deleteNonExistingUser() {
+        val deleteRequest = Unirest.delete(SERVERURL + "/users/" + userID)
+        val jsonNode = deleteRequest.asJson()
+        val status = jsonNode.status
+        val jsonObject = jsonNode.body.`object`
+        assertEquals(200, status)
+        assertEquals(404, jsonObject.getInt("code"))
+        assertNotNull(jsonObject)
+        assertEquals("User not found", jsonObject.getString("message"))
     }
 }

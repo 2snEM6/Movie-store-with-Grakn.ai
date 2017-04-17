@@ -3,6 +3,7 @@ package limia.Service
 import limia.Dao.UserDao
 import limia.Dto.User
 import limia.Exception.EntityAlreadyExistsException
+import limia.Exception.EntityNotFoundException
 import limia.Service.IUserService
 import java.util.*
 
@@ -16,9 +17,15 @@ class UserService() : IUserService {
     @Throws(EntityAlreadyExistsException::class)
     override fun create(name: String, email: String): User {
         val user = User(name, email, UUID.randomUUID().toString())
-        return dao!!.create(user)
+        try {
+            dao!!.existsBy(User::class.java, "email", email)
+        } catch(e: EntityNotFoundException) {
+            return dao!!.create(user)
+        }
+        return user
     }
 
+    @Throws(EntityNotFoundException::class)
     override fun read(id: String): User {
         return dao!!.read(id)
     }
@@ -27,6 +34,7 @@ class UserService() : IUserService {
         return dao!!.update(user)
     }
 
+    @Throws(EntityNotFoundException::class)
     override fun delete(id: String) {
         dao!!.delete(id)
     }
