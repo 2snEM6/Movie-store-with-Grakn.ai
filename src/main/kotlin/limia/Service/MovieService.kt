@@ -20,7 +20,7 @@ class MovieService() : IMovieService {
     override fun create(themoviedb_id: String): Movie {
         val movie = Movie(UUID.randomUUID().toString(), themoviedb_id)
         try {
-            dao!!.existsBy(Movie::class.java, "themoviedb_id", themoviedb_id)
+            dao!!.existsBy(Movie::class, "themoviedb_id", themoviedb_id)
         } catch (e: EntityNotFoundException) {
             return dao!!.create(movie)
         }
@@ -29,7 +29,7 @@ class MovieService() : IMovieService {
 
     @Throws(EntityNotFoundException::class)
     override fun read(id: String): Movie {
-        return dao!!.read(id)
+        return dao!!.read(Movie::class, id) as Movie
     }
 
     override fun update(movie: Movie): Movie {
@@ -37,7 +37,7 @@ class MovieService() : IMovieService {
     }
 
     override fun delete(id: String) {
-        dao!!.delete(id)
+        dao!!.delete(Movie::class, id)
     }
 
     override fun readAll(): ArrayList<Movie> {

@@ -1,18 +1,14 @@
 package limia.Response
 
 /**
- * Created by macbook on 8/4/17.
+ * Created by workstation on 20/04/2017.
  */
-class Response {
-    var code: Int = 0
-    var message: String? = null
-    var data: Any? = null
+open class Response {
+    var code: Int? = null
 
-    constructor(code: Int, message: String?, data: Any?) {
+    constructor(code: Int?) {
         this.code = code
-        this.message = message
-        this.data = data
     }
 
-    constructor() {}
+    constructor()
 }

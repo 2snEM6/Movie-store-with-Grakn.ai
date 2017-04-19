@@ -17,16 +17,16 @@ class RelationTest {
 
 
     @Test
-    fun createDownloadRelationBetweenUserAndMovie() {
+    fun createDownloadRelationBetweenNonExistentUserAndMovie() {
         val postRequest = Unirest.post("$SERVERURL/users/$userID/movies/$movieID")
                 .queryString("relation", "download")
         val jsonNode = postRequest.asJson()
         val status = jsonNode.status
         val jsonObject = jsonNode.body.`object`
         assertEquals(200, status)
-        assertEquals(201, jsonObject.getInt("code"))
-        assertNotNull(jsonObject)
-        assertNotNull(jsonObject.getJSONObject("data"))
+        assertEquals(404, jsonObject.getInt("code"))
+        /*assertNotNull(jsonObject)
+        assertNotNull(jsonObject.getJSONObject("data"))*/
     }
 
 

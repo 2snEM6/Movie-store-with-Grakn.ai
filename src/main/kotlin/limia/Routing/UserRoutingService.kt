@@ -8,7 +8,7 @@ import limia.Definition.ResponseMessageBuilder.*;
 import limia.Dto.User
 import limia.Exception.EntityAlreadyExistsException
 import limia.Exception.EntityNotFoundException
-import limia.Response.Response
+import limia.Response.SuccessResponse
 import spark.Spark.*
 import java.util.*
 
@@ -32,14 +32,14 @@ class UserRoutingService : RoutingService<User>(), IRoutingService<User> {
                     alreadyExists = true;
                 }
                 if (!alreadyExists)
-                    gson.toJson(Response(201, CREATE(type), user))
+                    gson.toJson(SuccessResponse(201, CREATE(type), user))
                 else
-                    gson.toJson(Response(409, ALREADY_EXISTS(type), null))
+                    gson.toJson(SuccessResponse(409, ALREADY_EXISTS(type), null))
             }
 
             get("") { req, res ->
                 val users : ArrayList<User> = userController?.readAllUsers()
-                gson.toJson(Response(200, READ_ALL(type), users))
+                gson.toJson(SuccessResponse(200, READ_ALL(type), users))
             }
 
             get("/:id") { req, res ->
@@ -51,14 +51,14 @@ class UserRoutingService : RoutingService<User>(), IRoutingService<User> {
                     notFound = true
                 }
                 if (!notFound)
-                    gson.toJson(Response(200, READ(type), user))
+                    gson.toJson(SuccessResponse(200, READ(type), user))
                 else
-                    gson.toJson(Response(404, NOT_FOUND(type), null))
+                    gson.toJson(SuccessResponse(404, NOT_FOUND(type), null))
             }
 
             put("/:id") { req, res ->
                 userController?.updateUser(req)
-                gson.toJson(Response(200, UPDATE(type), null))
+                gson.toJson(SuccessResponse(200, UPDATE(type), null))
             }
 
             delete("/:id") { req, res ->
@@ -69,9 +69,9 @@ class UserRoutingService : RoutingService<User>(), IRoutingService<User> {
                     notFound = true
                 }
                 if (!notFound)
-                    gson.toJson(Response(204, DELETE(type), null))
+                    gson.toJson(SuccessResponse(204, DELETE(type), null))
                 else
-                    gson.toJson(Response(404, NOT_FOUND(type), null))
+                    gson.toJson(SuccessResponse(404, NOT_FOUND(type), null))
             }
         }
     }

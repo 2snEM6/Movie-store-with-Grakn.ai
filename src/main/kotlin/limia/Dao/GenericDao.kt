@@ -7,12 +7,13 @@ import limia.Exception.EntityNotFoundException
 import limia.Grakn.GraknEntityManager
 import java.lang.reflect.ParameterizedType
 import java.util.*
+import kotlin.reflect.KClass
 
 
 /**
  * Created by workstation on 05/04/2017.
  */
-abstract class GenericDao<T>() : IGenericDao<T> {
+abstract class GenericDao<T : Any>() : IGenericDao<T> {
 
     private var type: Class<T>? = null
     private var graknEntityManager: GraknEntityManager? = null
@@ -27,12 +28,15 @@ abstract class GenericDao<T>() : IGenericDao<T> {
     }
 
     @Throws(Exception::class)
-    override fun existsBy(type: Class<T>, key :String, value: String)  {
-        val entity = graknEntityManager!!.findBy(type, key, value)
+    override fun<T : Any> existsBy(type: KClass<T>, key :String, value: String)  {
+        val entity = graknEntityManager!!.findBy(type.java, key, value)
         if (entity != null)
             throw EntityAlreadyExistsException()
-        else
-            throw EntityNotFoundException()
+        else{
+            var e = EntityNotFoundException()
+            e.addEntityType(type)
+            throw e
+        }
     }
 
 
@@ -42,17 +46,24 @@ abstract class GenericDao<T>() : IGenericDao<T> {
     }
 
     @Throws(EntityNotFoundException::class)
-    override fun read(id: Any): T {
-        if (!graknEntityManager!!.exists(Entity::class.java, id))
-            throw EntityNotFoundException()
-        return graknEntityManager!!.read(type, id)
+    override fun <T: Any> read(type: KClass<T>, id: Any): Any? {
+        if (!graknEntityManager!!.exists(Entity::class.java, id)) {
+            var e = EntityNotFoundException()
+            e.addEntityType(type)
+            throw e
+        }
+        return graknEntityManager!!.read(type.java, id)
     }
 
     @Throws(EntityNotFoundException::class)
-    override fun delete(id: Any) {
-        if (!graknEntityManager!!.exists(Entity::class.java, id))
-            throw EntityNotFoundException()
-        graknEntityManager!!.delete(type, id)
+    override fun<T : Any> delete(type: KClass<T>, id: Any) {
+        if (!graknEntityManager!!.exists(Entity::class.java, id)){
+            var e = EntityNotFoundException()
+            e.addEntityType(type)
+            throw e
+        }
+
+        graknEntityManager!!.delete(type.java, id)
     }
 
     override fun readAll(type: Class<T>): ArrayList<T> {

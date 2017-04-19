@@ -9,7 +9,7 @@ import limia.Dto.Movie
 import limia.Dto.User
 import limia.Exception.EntityAlreadyExistsException
 import limia.Exception.EntityNotFoundException
-import limia.Response.Response
+import limia.Response.SuccessResponse
 import spark.Spark.*
 import java.util.*
 
@@ -33,16 +33,16 @@ class MovieRoutingService : RoutingService<Movie>(), IRoutingService<Movie> {
                     alreadyExists = true;
                 }
                 if (!alreadyExists)
-                    gson.toJson(Response(201, CREATE(type), movie))
+                    gson.toJson(SuccessResponse(201, CREATE(type), movie))
                 else
-                    gson.toJson(Response(409, ALREADY_EXISTS(type), null))
+                    gson.toJson(SuccessResponse(409, ALREADY_EXISTS(type), null))
 
             }
 
             get("") { req, res ->
                 val movies : ArrayList<Movie> = movieController?.readAllMovies()
                 res.status(200)
-                gson.toJson(Response(200, READ_ALL(type), movies))
+                gson.toJson(SuccessResponse(200, READ_ALL(type), movies))
             }
 
             get("/:id") { req, res ->
@@ -54,9 +54,9 @@ class MovieRoutingService : RoutingService<Movie>(), IRoutingService<Movie> {
                     notFound = true
                 }
                 if (!notFound)
-                    gson.toJson(Response(200, READ(type), movie))
+                    gson.toJson(SuccessResponse(200, READ(type), movie))
                 else
-                    gson.toJson(Response(404, NOT_FOUND(type), null))
+                    gson.toJson(SuccessResponse(404, NOT_FOUND(type), null))
             }
 
             put("/:id") { req, res ->
@@ -71,9 +71,9 @@ class MovieRoutingService : RoutingService<Movie>(), IRoutingService<Movie> {
                     notFound = true
                 }
                 if (!notFound)
-                    gson.toJson(Response(204, DELETE(type), null))
+                    gson.toJson(SuccessResponse(204, DELETE(type), null))
                 else
-                    gson.toJson(Response(404, NOT_FOUND(type), null))
+                    gson.toJson(SuccessResponse(404, NOT_FOUND(type), null))
             }
         }
     }

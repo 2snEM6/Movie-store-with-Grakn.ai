@@ -1,5 +1,6 @@
 package limia.Controller
 
+import limia.Dto.Movie
 import limia.Dto.Relation
 import limia.Dto.User
 import limia.Exception.EntityNotFoundException
@@ -25,8 +26,27 @@ class RelationController {
         val secondSplat = request.splat()[1]
 
         if (firstSplat.equals("users") && secondSplat.equals("movies")) {
-            var user = userService.read(request.params(":id0"))
-            var movie = movieService.read(request.params(":id1"))
+            var user: User? = null
+            var throwNotFoundException = false
+            var entityNotFoundException = EntityNotFoundException()
+            try {
+                user = userService.read(request.params(":id0"))
+            } catch(e: EntityNotFoundException) {
+                throwNotFoundException = true
+                entityNotFoundException.types.add(User::class)
+            }
+            
+            var movie: Movie? = null
+            try {
+                movie = movieService.read(request.params(":id1"))
+            } catch(e: EntityNotFoundException) {
+                throwNotFoundException = true
+                entityNotFoundException.types.add(Movie::class)
+            }
+
+            if (throwNotFoundException)
+                throw entityNotFoundException
+
             if  (user != null && movie != null) {
                 if (relationName.equals("download")) {
                     return relationService.create(request.params(":id0"), request.params(":id1"),

@@ -18,7 +18,7 @@ class UserService() : IUserService {
     override fun create(name: String, email: String): User {
         val user = User(name, email, UUID.randomUUID().toString())
         try {
-            dao!!.existsBy(User::class.java, "email", email)
+            dao!!.existsBy(User::class, "email", email)
         } catch(e: EntityNotFoundException) {
             return dao!!.create(user)
         }
@@ -27,7 +27,7 @@ class UserService() : IUserService {
 
     @Throws(EntityNotFoundException::class)
     override fun read(id: String): User {
-        return dao!!.read(id)
+        return dao!!.read(User::class, id) as User
     }
 
     override fun update(user: User): User {
@@ -36,7 +36,7 @@ class UserService() : IUserService {
 
     @Throws(EntityNotFoundException::class)
     override fun delete(id: String) {
-        dao!!.delete(id)
+        dao!!.delete(User::class, id)
     }
 
     override fun readAll(): ArrayList<User> {
