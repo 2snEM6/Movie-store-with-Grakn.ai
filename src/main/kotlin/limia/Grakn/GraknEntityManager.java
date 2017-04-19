@@ -49,8 +49,8 @@ public class GraknEntityManager {
             Relation relation = read(Relation.class, id);
             return relation != null;
         }
-        if (type == Entity.class) {
-            Entity entity = read(Entity.class, id);
+        if (type == limia.Dto.Entity.class) {
+            limia.Dto.Entity entity = read(limia.Dto.Entity.class, id);
             return entity != null;
         }
         return false;
@@ -137,7 +137,7 @@ public class GraknEntityManager {
     public <T> T read(Class<T> type, final Object id) {
         DBConnection.getInstance().open();
         try {
-            if (type == Entity.class) {
+            if (type == limia.Dto.Entity.class) {
                 EntityMapper entityMapper = new EntityMapper<>(User.class);
                 MatchQuery query = queryBuilder.match(
                         var("entity").has("identifier", var("id")),
@@ -146,7 +146,7 @@ public class GraknEntityManager {
                 final boolean[] first = {true};
                 final limia.Dto.Entity[] _entity = new limia.Dto.Entity[1];
                 query.forEach(k -> {
-                    Entity entity = k.get("entity").asEntity();
+                    ai.grakn.concept.Entity entity = k.get("entity").asEntity();
                     if (first[0])
                         _entity[0] = (limia.Dto.Entity) entityMapper.fromEntity(entity);
                     first[0] = false;
@@ -163,7 +163,7 @@ public class GraknEntityManager {
                 final boolean[] first = {true};
                 final User[] user = new User[1];
                 query.forEach(k -> {
-                    Entity entity = k.get("user").asEntity();
+                    ai.grakn.concept.Entity entity = k.get("user").asEntity();
                     if (first[0])
                         user[0] = (User) entityMapper.fromEntity(entity);
                     first[0] = false;

@@ -3,6 +3,7 @@ package limia.Controller
 import limia.Dto.Movie
 import limia.Dto.User
 import limia.Exception.EntityAlreadyExistsException
+import limia.Exception.EntityNotFoundException
 import limia.Service.MovieService
 import limia.Service.UserService
 import spark.Request
@@ -21,10 +22,12 @@ class MovieController {
         return movieService.create(themoviedb_id)
     }
 
+    @Throws(EntityNotFoundException::class)
     fun findMovie(request: Request): Movie {
         return movieService.read(request.params(":id"))
     }
 
+    @Throws(EntityNotFoundException::class)
     fun deleteMovie(request: Request) {
         movieService.delete(request.params(":id"))
     }

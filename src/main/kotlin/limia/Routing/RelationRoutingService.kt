@@ -23,12 +23,19 @@ class RelationRoutingService : RoutingService<Relation>(), IRoutingService<Relat
 
     override fun initializeRoutes() {
         post("/*/:id0/*/:id1") { request, response ->
-            val relation = relationController.createRelation(request)
-            var jsonBody : String?
-            if (relation != null)
-                jsonBody = gson.toJson(Response(201, CREATE(type), relation))
-            else jsonBody = gson.toJson(Response(404, ERROR(type,CREATE), null))
-            jsonBody
+            var relation: Relation? = null
+            var notFound = false
+            try {
+                relation = relationController.createRelation(request)
+            } catch(e: Exception) {
+                notFound = true
+            }
+            if (!notFound){
+                gson.toJson(Response(201, CREATE(type), relation))
+            }
+            else {
+                gson.toJson(Response(404, NOT_FOUND(type,CREATE), null))
+            }
         }
 
         get("/relations/:name") { request, response ->

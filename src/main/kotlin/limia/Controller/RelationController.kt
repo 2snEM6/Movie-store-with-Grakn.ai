@@ -2,6 +2,7 @@ package limia.Controller
 
 import limia.Dto.Relation
 import limia.Dto.User
+import limia.Exception.EntityNotFoundException
 import limia.Service.MovieService
 import limia.Service.RelationService
 import limia.Service.UserService
@@ -17,6 +18,7 @@ class RelationController {
     private val userService: UserService = UserService()
     private val movieService: MovieService = MovieService()
 
+    @Throws(EntityNotFoundException::class)
     fun createRelation(request: Request): Relation? {
         val relationName = request.queryParams("relation")
         val firstSplat = request.splat()[0]

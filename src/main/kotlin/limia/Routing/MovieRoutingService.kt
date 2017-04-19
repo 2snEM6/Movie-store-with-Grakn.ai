@@ -8,6 +8,7 @@ import limia.Definition.ResponseMessageBuilder.*
 import limia.Dto.Movie
 import limia.Dto.User
 import limia.Exception.EntityAlreadyExistsException
+import limia.Exception.EntityNotFoundException
 import limia.Response.Response
 import spark.Spark.*
 import java.util.*
@@ -45,8 +46,17 @@ class MovieRoutingService : RoutingService<Movie>(), IRoutingService<Movie> {
             }
 
             get("/:id") { req, res ->
-                val movie = movieController.findMovie(req)
-                gson.toJson(Response(200, READ(type), movie))
+                var movie: Movie? = null
+                var notFound = false
+                try {
+                    movie = movieController.findMovie(req)
+                } catch(e: EntityNotFoundException) {
+                    notFound = true
+                }
+                if (!notFound)
+                    gson.toJson(Response(200, READ(type), movie))
+                else
+                    gson.toJson(Response(404, NOT_FOUND(type), null))
             }
 
             put("/:id") { req, res ->
@@ -54,8 +64,16 @@ class MovieRoutingService : RoutingService<Movie>(), IRoutingService<Movie> {
             }
 
             delete("/:id") { req, res ->
-                movieController.deleteMovie(req)
-                gson.toJson(Response(204, DELETE(type), null))
+                var notFound = false
+                try {
+                    movieController.deleteMovie(req)
+                } catch(e: EntityNotFoundException) {
+                    notFound = true
+                }
+                if (!notFound)
+                    gson.toJson(Response(204, DELETE(type), null))
+                else
+                    gson.toJson(Response(404, NOT_FOUND(type), null))
             }
         }
     }

@@ -5,6 +5,7 @@ import limia.Dao.UserDao
 import limia.Dto.Movie
 import limia.Dto.User
 import limia.Exception.EntityAlreadyExistsException
+import limia.Exception.EntityNotFoundException
 import limia.Service.IUserService
 import java.util.*
 
@@ -18,9 +19,15 @@ class MovieService() : IMovieService {
     @Throws(EntityAlreadyExistsException::class)
     override fun create(themoviedb_id: String): Movie {
         val movie = Movie(UUID.randomUUID().toString(), themoviedb_id)
-        return dao!!.create(movie)
+        try {
+            dao!!.existsBy(Movie::class.java, "themoviedb_id", themoviedb_id)
+        } catch (e: EntityNotFoundException) {
+            return dao!!.create(movie)
+        }
+        return movie
     }
 
+    @Throws(EntityNotFoundException::class)
     override fun read(id: String): Movie {
         return dao!!.read(id)
     }
