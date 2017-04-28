@@ -3,6 +3,7 @@ package limia.Controller
 import limia.Dto.User
 import limia.Exception.EntityAlreadyExistsException
 import limia.Exception.EntityNotFoundException
+import limia.Exception.InvalidParametersException
 import limia.Service.UserService
 import spark.Request
 import java.util.*
@@ -14,8 +15,15 @@ class UserController {
 
     private val userService: UserService = UserService()
 
-    @Throws(EntityAlreadyExistsException::class)
+    fun areOnCreateParametersCorrect(request: Request): Boolean {
+        return request.queryParams().contains("email") && request.queryParams().contains("name")
+    }
+
+
+    @Throws(EntityAlreadyExistsException::class, InvalidParametersException::class)
     fun createUser(request: Request): User? {
+        if (!areOnCreateParametersCorrect(request))
+            throw InvalidParametersException()
         val name = request.queryParams("name")
         val email = request.queryParams("email")
         return userService.create(name, email)

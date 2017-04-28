@@ -18,6 +18,10 @@ public class ResponseMessageBuilder {
         return t.getSimpleName().concat(" ").concat(ALREADY_EXISTS);
     }
 
+    public static String BAD_REQUEST() {
+        return "Invalid or missing parameters";
+    }
+
     public static String DELETE(Class t) {
         return t.getSimpleName().concat(" ").concat(DELETE);
     }

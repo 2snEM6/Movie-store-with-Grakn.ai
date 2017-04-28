@@ -8,6 +8,8 @@ import limia.Definition.ResponseMessageBuilder.*;
 import limia.Dto.User
 import limia.Exception.EntityAlreadyExistsException
 import limia.Exception.EntityNotFoundException
+import limia.Exception.InvalidParametersException
+import limia.Response.ErrorResponse
 import limia.Response.SuccessResponse
 import spark.Spark.*
 import java.util.*
@@ -25,16 +27,26 @@ class UserRoutingService : RoutingService<User>(), IRoutingService<User> {
         path("/users") {
             post("") { req, res ->
                 var user: User? = null
+                var errors = ArrayList<String>()
                 var alreadyExists = false;
+                var invalidParams = false;
                 try {
                     user = userController?.createUser(req)
                 } catch(e: EntityAlreadyExistsException) {
                     alreadyExists = true;
+                } catch (e: InvalidParametersException) {
+                    invalidParams = true;
                 }
                 if (!alreadyExists)
                     gson.toJson(SuccessResponse(201, CREATE(type), user))
-                else
-                    gson.toJson(SuccessResponse(409, ALREADY_EXISTS(type), null))
+                else if (invalidParams){
+                    errors.add(BAD_REQUEST())
+                    gson.toJson(ErrorResponse(400, errors))
+                }
+                else {
+                    errors.add(ALREADY_EXISTS(type))
+                    gson.toJson(ErrorResponse(409, errors))
+                }
             }
 
             get("") { req, res ->
@@ -45,6 +57,7 @@ class UserRoutingService : RoutingService<User>(), IRoutingService<User> {
             get("/:id") { req, res ->
                 var user: User? = null
                 var notFound = false
+                var errors = ArrayList<String>()
                 try {
                     user = userController?.findUser(req)
                 } catch(e: EntityNotFoundException) {
@@ -53,7 +66,8 @@ class UserRoutingService : RoutingService<User>(), IRoutingService<User> {
                 if (!notFound)
                     gson.toJson(SuccessResponse(200, READ(type), user))
                 else
-                    gson.toJson(SuccessResponse(404, NOT_FOUND(type), null))
+                    errors.add(NOT_FOUND(type))
+                    gson.toJson(ErrorResponse(404, errors))
             }
 
             put("/:id") { req, res ->
@@ -63,6 +77,7 @@ class UserRoutingService : RoutingService<User>(), IRoutingService<User> {
 
             delete("/:id") { req, res ->
                 var notFound = false
+                var errors = ArrayList<String>()
                 try {
                     userController?.deleteUser(req)
                 } catch(e: EntityNotFoundException) {
@@ -71,7 +86,8 @@ class UserRoutingService : RoutingService<User>(), IRoutingService<User> {
                 if (!notFound)
                     gson.toJson(SuccessResponse(204, DELETE(type), null))
                 else
-                    gson.toJson(SuccessResponse(404, NOT_FOUND(type), null))
+                    errors.add(NOT_FOUND(type))
+                    gson.toJson(ErrorResponse(404, errors))
             }
         }
     }

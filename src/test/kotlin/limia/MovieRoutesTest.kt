@@ -41,6 +41,21 @@ class MovieRoutesTest {
     }
 
     @Test
+    fun createExistingMovieByTheMovieDbID() {
+        createMovie()
+        val postRequest = Unirest.post(SERVERURL + "/movies")
+                .queryString("themoviedb_id", themoviedbID)
+        val jsonNode = postRequest.asJson()
+        val status = jsonNode.status
+        val jsonObject = jsonNode.body.`object`
+        assertEquals(200, status)
+        assertEquals(409, jsonObject.getInt("code"))
+        assertNotNull(jsonObject.getJSONArray("errors"))
+        assertEquals(jsonObject.getJSONArray("errors").contains("Movie already exists"), true)
+        assertEquals(jsonObject.getJSONArray("errors").length(), 1)
+    }
+
+    @Test
     fun getExistingMovie() {
         createMovie()
         val getRequest = Unirest.get(SERVERURL + "/movies/" + movieID)
@@ -65,7 +80,9 @@ class MovieRoutesTest {
         assertEquals(200, status)
         assertEquals(404, jsonObject.getInt("code"))
         assertNotNull(jsonObject)
-        assertEquals(jsonObject.getString("message"), "Movie not found")
+        assertNotNull(jsonObject.getJSONArray("errors"))
+        assertEquals(jsonObject.getJSONArray("errors").contains("Movie not found"), true)
+        assertEquals(jsonObject.getJSONArray("errors").length(), 1)
     }
 
     @Test
@@ -76,7 +93,9 @@ class MovieRoutesTest {
         val jsonObject = jsonNode.body.`object`
         assertEquals(200, status)
         assertEquals(404, jsonObject.getInt("code"))
-        assertEquals("Movie not found", jsonObject.getString("message"))
+        assertNotNull(jsonObject.getJSONArray("errors"))
+        assertEquals(jsonObject.getJSONArray("errors").contains("Movie not found"), true)
+        assertEquals(jsonObject.getJSONArray("errors").length(), 1)
     }
 
     @Test

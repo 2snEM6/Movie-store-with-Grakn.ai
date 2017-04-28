@@ -9,6 +9,7 @@ import limia.Dto.Movie
 import limia.Dto.User
 import limia.Exception.EntityAlreadyExistsException
 import limia.Exception.EntityNotFoundException
+import limia.Response.ErrorResponse
 import limia.Response.SuccessResponse
 import spark.Spark.*
 import java.util.*
@@ -27,6 +28,7 @@ class MovieRoutingService : RoutingService<Movie>(), IRoutingService<Movie> {
             post("") { req, res ->
                 var movie: Movie? = null
                 var alreadyExists = false;
+                var errors = ArrayList<String>()
                 try {
                     movie = movieController.createMovie(req)
                 } catch(e: EntityAlreadyExistsException) {
@@ -34,8 +36,10 @@ class MovieRoutingService : RoutingService<Movie>(), IRoutingService<Movie> {
                 }
                 if (!alreadyExists)
                     gson.toJson(SuccessResponse(201, CREATE(type), movie))
-                else
-                    gson.toJson(SuccessResponse(409, ALREADY_EXISTS(type), null))
+                else {
+                    errors.add(ALREADY_EXISTS(type))
+                    gson.toJson(ErrorResponse(409, errors))
+                }
 
             }
 
@@ -48,6 +52,7 @@ class MovieRoutingService : RoutingService<Movie>(), IRoutingService<Movie> {
             get("/:id") { req, res ->
                 var movie: Movie? = null
                 var notFound = false
+                var errors = ArrayList<String>()
                 try {
                     movie = movieController.findMovie(req)
                 } catch(e: EntityNotFoundException) {
@@ -55,8 +60,10 @@ class MovieRoutingService : RoutingService<Movie>(), IRoutingService<Movie> {
                 }
                 if (!notFound)
                     gson.toJson(SuccessResponse(200, READ(type), movie))
-                else
-                    gson.toJson(SuccessResponse(404, NOT_FOUND(type), null))
+                else {
+                    errors.add(NOT_FOUND(type))
+                    gson.toJson(ErrorResponse(404, errors))
+                }
             }
 
             put("/:id") { req, res ->
@@ -65,6 +72,7 @@ class MovieRoutingService : RoutingService<Movie>(), IRoutingService<Movie> {
 
             delete("/:id") { req, res ->
                 var notFound = false
+                var errors = ArrayList<String>()
                 try {
                     movieController.deleteMovie(req)
                 } catch(e: EntityNotFoundException) {
@@ -72,8 +80,10 @@ class MovieRoutingService : RoutingService<Movie>(), IRoutingService<Movie> {
                 }
                 if (!notFound)
                     gson.toJson(SuccessResponse(204, DELETE(type), null))
-                else
-                    gson.toJson(SuccessResponse(404, NOT_FOUND(type), null))
+                else {
+                    errors.add(NOT_FOUND(type))
+                    gson.toJson(ErrorResponse(404, errors))
+                }
             }
         }
     }

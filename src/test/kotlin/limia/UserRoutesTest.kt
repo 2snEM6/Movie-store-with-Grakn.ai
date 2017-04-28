@@ -47,6 +47,25 @@ class UserRoutesTest {
     }
 
     @Test
+    fun createUserWithWrongParams() {
+        val faker = Faker()
+        name = faker.name().fullName()
+        val postRequest = Unirest.post(SERVERURL + "/users")
+                .queryString("name", name)
+        val jsonNode = postRequest.asJson()
+        val status = jsonNode.status
+        val jsonObject = jsonNode.body.`object`
+        assertEquals(200, status)
+        assertEquals(201, jsonObject.getInt("code"))
+        assertNotNull(jsonObject)
+        assertNotNull(jsonObject.getJSONArray("errors"))
+        assertEquals(jsonObject.getJSONArray("errors").contains("Invalido or missing parameters"), true)
+        assertEquals(jsonObject.getJSONArray("errors").length(), 1)
+    }
+
+
+
+    @Test
     fun createExistingUserByEmail() {
         createUser()
         val postRequest = Unirest.post(SERVERURL + "/users")
@@ -58,7 +77,9 @@ class UserRoutesTest {
         assertEquals(200, status)
         assertEquals(409, jsonObject.getInt("code"))
         assertNotNull(jsonObject)
-        assertEquals(jsonObject.getString("message"), "User already exists")
+        assertNotNull(jsonObject.getJSONArray("errors"))
+        assertEquals(jsonObject.getJSONArray("errors").contains("User already exists"), true)
+        assertEquals(jsonObject.getJSONArray("errors").length(), 1)
     }
 
     @Test
@@ -87,7 +108,9 @@ class UserRoutesTest {
         assertEquals(200, status)
         assertEquals(404, jsonObject.getInt("code"))
         assertNotNull(jsonObject)
-        assertEquals(jsonObject.getString("message"), "User not found")
+        assertNotNull(jsonObject.getJSONArray("errors"))
+        assertEquals(jsonObject.getJSONArray("errors").contains("User not found"), true)
+        assertEquals(jsonObject.getJSONArray("errors").length(), 1)
     }
 
     @Test
@@ -111,6 +134,8 @@ class UserRoutesTest {
         assertEquals(200, status)
         assertEquals(404, jsonObject.getInt("code"))
         assertNotNull(jsonObject)
-        assertEquals("User not found", jsonObject.getString("message"))
+        assertNotNull(jsonObject.getJSONArray("errors"))
+        assertEquals(jsonObject.getJSONArray("errors").contains("User not found"), true)
+        assertEquals(jsonObject.getJSONArray("errors").length(), 1)
     }
 }
