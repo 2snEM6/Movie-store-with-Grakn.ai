@@ -1,10 +1,7 @@
 package limia.Grakn;
 
 import ai.grakn.GraknGraph;
-import ai.grakn.concept.Concept;
-import ai.grakn.concept.Entity;
-import ai.grakn.concept.Instance;
-import ai.grakn.concept.RoleType;
+import ai.grakn.concept.*;
 import ai.grakn.exception.GraknValidationException;
 import ai.grakn.graql.InsertQuery;
 import ai.grakn.graql.MatchQuery;
@@ -134,11 +131,37 @@ public class GraknEntityManager {
         DBConnection.getInstance().close();
     }
 
+    public boolean existsRelation(String relationName, String firstRoleplayerID, String secondRoleplayerID,
+                                 String firstRole, String secondRole) {
+
+        DBConnection.getInstance().open();
+        RelationMapper relationMapper = new RelationMapper();
+
+
+        MatchQuery query = queryBuilder.match(
+                var("relation").rel(firstRole, "x").rel(secondRole, "y"),
+                var("relation").isa(relationName),
+                var("x").has("identifier", firstRoleplayerID),
+                var("y").has("identifier", secondRoleplayerID)
+        );
+        /*MatchQuery query = queryBuilder.match(var("relation").rel(var("x").playsRole(firstRole),
+                var("y").playsRole(secondRole)).isa(relationName), var("x").has("identifier",
+                firstRoleplayerID), var("y").has("identifier", secondRoleplayerID));*/
+        final boolean[] found = {false};
+        final Relation[] relation = {null};
+        query.forEach(k -> {
+            ai.grakn.concept.Relation graknRelation = k.get("relation").asRelation();
+            found[0] = true;
+        });
+        DBConnection.getInstance().close();
+        return found[0];
+    }
+
     public <T> T read(Class<T> type, final Object id) {
         DBConnection.getInstance().open();
         try {
             if (type == limia.Dto.Entity.class) {
-                EntityMapper entityMapper = new EntityMapper<>(User.class);
+                EntityMapper entityMapper = new EntityMapper<>(limia.Dto.Entity.class);
                 MatchQuery query = queryBuilder.match(
                         var("entity").has("identifier", var("id")),
                         var("id").value(id)
@@ -147,10 +170,13 @@ public class GraknEntityManager {
                 final limia.Dto.Entity[] _entity = new limia.Dto.Entity[1];
                 query.forEach(k -> {
                     ai.grakn.concept.Entity entity = k.get("entity").asEntity();
-                    if (first[0])
+                    if (first[0]) {
                         _entity[0] = (limia.Dto.Entity) entityMapper.fromEntity(entity);
+                        _entity[0].setIdentifier((String) id);
+                    }
                     first[0] = false;
                 });
+
                 DBConnection.getInstance().close();
                 return (T) _entity[0];
             }
@@ -164,8 +190,10 @@ public class GraknEntityManager {
                 final User[] user = new User[1];
                 query.forEach(k -> {
                     ai.grakn.concept.Entity entity = k.get("user").asEntity();
-                    if (first[0])
+                    if (first[0]) {
                         user[0] = (User) entityMapper.fromEntity(entity);
+                        user[0].setIdentifier((String) id);
+                    }
                     first[0] = false;
                 });
                 DBConnection.getInstance().close();
@@ -181,12 +209,31 @@ public class GraknEntityManager {
                 final Movie[] movie = new Movie[1];
                 query.forEach(k -> {
                     Entity entity = k.get("movie").asEntity();
-                    if (first[0])
+                    if (first[0]) {
                         movie[0] = (Movie) entityMapper.fromEntity(entity);
+                        movie[0].setIdentifier((String) id);
+                    }
                     first[0] = false;
                 });
                 DBConnection.getInstance().close();
                 return (T) movie[0];
+            }
+            if (type == Relation.class) {
+                MatchQuery query = queryBuilder.match(var("relation").id(ConceptId.of(id)));
+                RelationMapper relationMapper = new RelationMapper();
+                final boolean[] first = {true};
+                final Relation[] relation = new Relation[1];
+                query.forEach(k -> {
+                    ai.grakn.concept.Relation graknRelation = k.get("relation").asRelation();
+                    if (first[0]) {
+                        relation[0] = (Relation) relationMapper.fromRelation(graknRelation);// TODO: 21/05/2017 Map the relation
+                        relation[0].setIdentifier((String) id);
+                    }
+                    first[0] = false;
+                });
+                DBConnection.getInstance().close();
+                return (T) relation[0];
+
             }
         } catch (Exception e) {
             System.out.println("Unable to read entities");
@@ -226,11 +273,36 @@ public class GraknEntityManager {
             EntityMapper entityMapper = new EntityMapper(User.class);
             MatchQuery matchQuery = queryBuilder.match(var("user").isa("user"));
             for (Map<String, Concept> conceptMap : matchQuery) {
+                Entity entity = conceptMap.get("user").asEntity();
+                System.out.println(conceptMap);
                 User user = (User) entityMapper.fromEntity(conceptMap.get("user").asEntity());
-                users.add(user );
+                users.add(user);
             }
             DBConnection.getInstance().close();
             return (ArrayList<T>) users;
+        }
+        if (type == Relation.class) {
+            ArrayList<Relation> relations = new ArrayList<>();
+            RelationMapper relationMapper = new RelationMapper();
+            MatchQuery matchQuery = queryBuilder.match(var("relation").sub("relation"));
+
+            ArrayList<String> relationNames = new ArrayList<>();
+
+            matchQuery.forEach(concept -> {
+                relationNames.add(concept.get("relation").asType().getName().getValue());
+            });
+            relationNames.forEach(relationName -> {
+                if (!relationName.equals("relation")) {
+                    MatchQuery _matchQuery = queryBuilder.match(var("relation").isa(relationName));
+                    for (Map<String, Concept> conceptMap : _matchQuery) {
+                        ai.grakn.concept.Relation relation = conceptMap.get("relation").asRelation();
+                        Relation _relation = relationMapper.fromRelation(relation);
+                        relations.add(_relation);
+                    }
+                }
+            });
+            DBConnection.getInstance().close();
+            return (ArrayList<T>) relations;
         }
         if (type == Movie.class) {
             ArrayList<Movie> movies = new ArrayList<>();
@@ -246,6 +318,8 @@ public class GraknEntityManager {
         DBConnection.getInstance().close();
         return new ArrayList<>();
     }
+
+
 
     public <T> ArrayList<T> readAllSpecificRelations(T t) {
         DBConnection.getInstance().open();

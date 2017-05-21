@@ -9,11 +9,30 @@ import java.lang.reflect.Field
 import java.lang.reflect.ParameterizedType
 import java.lang.reflect.Type
 import java.util.HashMap
+import org.apache.tinkerpop.gremlin.structure.T
+
+
 
 /**
  * Created by macbook on 8/4/17.
  */
 class EntityMapper<T : Any>(protected var type: Class<T>) : IEntityMapper<T> {
+
+
+    fun getField(clazz: Class<*>?, name: String): Field? {
+        var clazz = clazz
+        var field: Field? = null
+        while (clazz != null && field == null) {
+            try {
+                field = clazz.getDeclaredField(name)
+            } catch (e: Exception) {
+            }
+
+            clazz = clazz.superclass
+        }
+        return field
+    }
+
 
     override fun extractNonNullFields(t: T): Map<String, Any> {
         val fields = HashMap<String, Any>()
@@ -42,9 +61,11 @@ class EntityMapper<T : Any>(protected var type: Class<T>) : IEntityMapper<T> {
             println("Unable to instantiate")
         }
 
-        for (field in type.declaredFields) {
-            for (resource in entity.resources()) {
-                val resourceName = resource.type().name.toString()
+
+        for (resource in entity.resources()) {
+            val resourceName = resource.type().name.toString()
+            var field = getField(type, resourceName)
+            if (field != null) {
                 val fieldName = field.name
                 if (resourceName == fieldName) {
                     try {
@@ -54,7 +75,6 @@ class EntityMapper<T : Any>(protected var type: Class<T>) : IEntityMapper<T> {
                     } catch (e: IllegalAccessException) {
                         println("Unable to parse field")
                     }
-
                 }
             }
         }

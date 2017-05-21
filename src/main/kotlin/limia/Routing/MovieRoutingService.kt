@@ -35,10 +35,10 @@ class MovieRoutingService : RoutingService<Movie>(), IRoutingService<Movie> {
                     alreadyExists = true;
                 }
                 if (!alreadyExists)
-                    gson.toJson(SuccessResponse(201, CREATE(type), movie))
+                    return@post gson.toJson(SuccessResponse(201, CREATE(type), movie))
                 else {
                     errors.add(ALREADY_EXISTS(type))
-                    gson.toJson(ErrorResponse(409, errors))
+                    return@post gson.toJson(ErrorResponse(409, errors))
                 }
 
             }
@@ -59,10 +59,10 @@ class MovieRoutingService : RoutingService<Movie>(), IRoutingService<Movie> {
                     notFound = true
                 }
                 if (!notFound)
-                    gson.toJson(SuccessResponse(200, READ(type), movie))
+                    return@get gson.toJson(SuccessResponse(200, READ(type), movie))
                 else {
                     errors.add(NOT_FOUND(type))
-                    gson.toJson(ErrorResponse(404, errors))
+                    return@get gson.toJson(ErrorResponse(404, errors))
                 }
             }
 
@@ -79,10 +79,10 @@ class MovieRoutingService : RoutingService<Movie>(), IRoutingService<Movie> {
                     notFound = true
                 }
                 if (!notFound)
-                    gson.toJson(SuccessResponse(204, DELETE(type), null))
+                    return@delete gson.toJson(SuccessResponse(204, DELETE(type), null))
                 else {
                     errors.add(NOT_FOUND(type))
-                    gson.toJson(ErrorResponse(404, errors))
+                    return@delete gson.toJson(ErrorResponse(404, errors))
                 }
             }
         }

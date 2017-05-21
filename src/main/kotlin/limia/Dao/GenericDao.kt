@@ -2,6 +2,7 @@ package limia.Dao
 
 import limia.Dao.IGenericDao
 import limia.Dto.Entity
+import limia.Dto.Relation
 import limia.Exception.EntityAlreadyExistsException
 import limia.Exception.EntityNotFoundException
 import limia.Grakn.GraknEntityManager
@@ -39,7 +40,6 @@ abstract class GenericDao<T : Any>() : IGenericDao<T> {
         }
     }
 
-
     override fun update(t: T): T {
         return graknEntityManager!!.update(t)
         //To change body of created functions use File | Settings | File Templates.
@@ -47,12 +47,18 @@ abstract class GenericDao<T : Any>() : IGenericDao<T> {
 
     @Throws(EntityNotFoundException::class)
     override fun <T: Any> read(type: KClass<T>, id: Any): Any? {
-        if (!graknEntityManager!!.exists(Entity::class.java, id)) {
+
+        if (type != Relation::class && !graknEntityManager!!.exists(Entity::class.java, id)) {
             var e = EntityNotFoundException()
             e.addEntityType(type)
             throw e
         }
         return graknEntityManager!!.read(type.java, id)
+    }
+
+    fun existsRelation(relationName: String, firstRoleplayerID: String, secondRolePlayerID: String,
+                                firstRole: String, secondRole: String): Boolean {
+        return graknEntityManager!!.existsRelation(relationName,firstRoleplayerID, secondRolePlayerID, firstRole, secondRole);
     }
 
     @Throws(EntityNotFoundException::class)

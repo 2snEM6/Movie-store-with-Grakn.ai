@@ -19,6 +19,35 @@ class RelationController {
     private val userService: UserService = UserService()
     private val movieService: MovieService = MovieService()
 
+
+    fun existsRelation(request: Request): Boolean? {
+        val relationName = request.queryParams("relation")
+        val firstSplat = request.splat()[0]
+        val secondSplat = request.splat()[1]
+
+        if (firstSplat.equals("users") && secondSplat.equals("movies")) {
+            val userID = request.params(":id0");
+            val movieID = request.params(":id1");
+            if (relationName.equals("download")) {
+                return relationService.exists(relationName, userID, movieID, "downloaded_a", "is_downloaded_by");
+            }
+            if (relationName.equals("favorite")) {
+                return relationService.exists(relationName, userID, movieID, "favorited_a", "is_favorited_by");
+            }
+        }
+        return false
+    }
+
+
+    fun readAll(): ArrayList<Relation> {
+        return relationService.readAll();
+    }
+
+    fun readRelationByID(identifier: String): Relation? {
+        return relationService.readByID(identifier)
+    }
+
+
     @Throws(EntityNotFoundException::class)
     fun createRelation(request: Request): Relation? {
         val relationName = request.queryParams("relation")
@@ -63,7 +92,7 @@ class RelationController {
 
     fun findAllRelationsByName(request: Request): ArrayList<Relation> {
         val relationName = request.params(":name")
-        if (relationName.equals("download")) {
+        if (relationName.equals("download") || relationName.equals("favorite")) {
             return relationService.readAllOfSpecificType(relationName)
         }
         return ArrayList()

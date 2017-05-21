@@ -18,6 +18,7 @@ class UserRoutesTest {
     var userID : String? = null
     var name : String? = null
     var email : String? = null
+    var tag: String = "[TEST][User]"
 
     @Before
     fun setUp() {
@@ -44,6 +45,7 @@ class UserRoutesTest {
         assertNotNull(jsonObject.getJSONObject("data").getString("identifier"))
         userID = jsonObject.getJSONObject("data").getString("identifier")
         assertEquals(jsonObject.getString("message"), "User created")
+        println(tag + " ID: $userID email: $email name: $name")
     }
 
     @Test
@@ -56,10 +58,10 @@ class UserRoutesTest {
         val status = jsonNode.status
         val jsonObject = jsonNode.body.`object`
         assertEquals(200, status)
-        assertEquals(201, jsonObject.getInt("code"))
+        assertEquals(400, jsonObject.getInt("code"))
         assertNotNull(jsonObject)
         assertNotNull(jsonObject.getJSONArray("errors"))
-        assertEquals(jsonObject.getJSONArray("errors").contains("Invalido or missing parameters"), true)
+        assertEquals(jsonObject.getJSONArray("errors").contains("Invalid or missing parameters"), true)
         assertEquals(jsonObject.getJSONArray("errors").length(), 1)
     }
 

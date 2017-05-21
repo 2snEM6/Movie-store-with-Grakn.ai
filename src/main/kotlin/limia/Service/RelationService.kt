@@ -20,8 +20,21 @@ class RelationService() : IRelationService {
         return dao!!.create(relation)
     }
 
+    override fun exists(relationName: String, firstRoleplayerID: String, secondRoleplayerID: String,
+                        firstRole: String, secondRole: String) :Boolean {
+        return dao!!.existsRelation(relationName, firstRoleplayerID, secondRoleplayerID, firstRole, secondRole)
+    }
+
+    override fun readByID(identifier: String): Relation? {
+        return dao!!.read(Relation::class, identifier as Any) as Relation?
+    }
+
     override fun readAllOfSpecificType(relationName: String): ArrayList<Relation> {
         return dao!!.readAllSpecificRelations(Relation(null, null, relationName, null, null))
+    }
+
+    override fun readAll(): ArrayList<Relation> {
+        return dao!!.readAll(Relation::class.java)
     }
 
     init {

@@ -14,6 +14,10 @@ public class ResponseMessageBuilder {
         return t.getSimpleName().concat(" ").concat(CREATE);
     }
 
+    public static String EXISTS(Class t) {
+        return "The " + t.getSimpleName().toLowerCase().concat(" ").concat(EXISTS);
+    }
+
     public static String ALREADY_EXISTS(Class t) {
         return t.getSimpleName().concat(" ").concat(ALREADY_EXISTS);
     }

@@ -13,4 +13,9 @@ interface IRelationService {
                relationName: String): Relation
 
     fun readAllOfSpecificType(relationName : String): ArrayList<Relation>;
+    fun exists(relationName: String, firstRoleplayerID: String, secondRoleplayerID: String, firstRole: String,
+               secondRole: String): Boolean?
+
+    fun readByID(identifier: String): Relation?
+    fun readAll(): ArrayList<Relation>
 }

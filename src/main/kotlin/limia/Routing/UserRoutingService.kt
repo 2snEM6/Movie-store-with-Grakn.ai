@@ -37,22 +37,26 @@ class UserRoutingService : RoutingService<User>(), IRoutingService<User> {
                 } catch (e: InvalidParametersException) {
                     invalidParams = true;
                 }
-                if (!alreadyExists)
-                    gson.toJson(SuccessResponse(201, CREATE(type), user))
-                else if (invalidParams){
-                    errors.add(BAD_REQUEST())
-                    gson.toJson(ErrorResponse(400, errors))
+                val errorsPresent = alreadyExists or invalidParams
+
+                if (errorsPresent) {
+                    if (alreadyExists) {
+                        errors.add(ALREADY_EXISTS(type))
+                        return@post gson.toJson(ErrorResponse(409, errors))
+                    }
+                    if (invalidParams) {
+                        errors.add(BAD_REQUEST())
+                        return@post gson.toJson(ErrorResponse(400, errors))
+                    }
                 }
-                else {
-                    errors.add(ALREADY_EXISTS(type))
-                    gson.toJson(ErrorResponse(409, errors))
-                }
+                return@post gson.toJson(SuccessResponse(201, CREATE(type), user))
             }
 
             get("") { req, res ->
                 val users : ArrayList<User> = userController?.readAllUsers()
                 gson.toJson(SuccessResponse(200, READ_ALL(type), users))
             }
+
 
             get("/:id") { req, res ->
                 var user: User? = null
@@ -64,10 +68,11 @@ class UserRoutingService : RoutingService<User>(), IRoutingService<User> {
                     notFound = true
                 }
                 if (!notFound)
-                    gson.toJson(SuccessResponse(200, READ(type), user))
-                else
+                    return@get gson.toJson(SuccessResponse(200, READ(type), user))
+                else {
                     errors.add(NOT_FOUND(type))
-                    gson.toJson(ErrorResponse(404, errors))
+                    return@get gson.toJson(ErrorResponse(404, errors))
+                }
             }
 
             put("/:id") { req, res ->
@@ -84,10 +89,11 @@ class UserRoutingService : RoutingService<User>(), IRoutingService<User> {
                     notFound = true
                 }
                 if (!notFound)
-                    gson.toJson(SuccessResponse(204, DELETE(type), null))
-                else
+                    return@delete gson.toJson(SuccessResponse(204, DELETE(type), null))
+                else {
                     errors.add(NOT_FOUND(type))
-                    gson.toJson(ErrorResponse(404, errors))
+                    return@delete gson.toJson(ErrorResponse(404, errors))
+                }
             }
         }
     }
