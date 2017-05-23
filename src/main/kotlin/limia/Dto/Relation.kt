@@ -28,6 +28,4 @@ class Relation : Entity {
         this.firstRole = firstRole
         this.secondRole = secondRole
     }
-
-
 }

@@ -25,7 +25,7 @@ class RelationRoutingService : RoutingService<Relation>(), IRoutingService<Relat
     private var relationController: RelationController = RelationController()
 
     override fun initializeRoutes() {
-        post("/*/:id0/*/:id1") post@ { request, response ->
+        post("/*/:id0/*/:id1/:relation") post@ { request, response ->
             var relation: Relation? = null
             try {
                 relation = relationController.createRelation(request)
@@ -40,7 +40,7 @@ class RelationRoutingService : RoutingService<Relation>(), IRoutingService<Relat
             gson.toJson(SuccessResponse(201, CREATE(type), relation))
         }
 
-        get("/*/:id0/*/:id1") post@ { request, response ->
+        get("/*/:id0/*/:id1/:relation") post@ { request, response ->
             var exists: Boolean = relationController.existsRelation(request)!!
             if (!exists){
                 var errorResponse = ErrorResponse()
@@ -75,7 +75,7 @@ class RelationRoutingService : RoutingService<Relation>(), IRoutingService<Relat
             return@get gson.toJson(ErrorResponse(404, errors = errors))
         }
 
-        get("/relations/:name") { request, response ->
+        get("/relations/name/:name") { request, response ->
             val relations = relationController.findAllRelationsByName(request)
             var jsonBody : String?
             if (relations.isEmpty()) {

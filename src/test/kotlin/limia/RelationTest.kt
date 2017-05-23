@@ -18,8 +18,7 @@ class RelationTest {
 
     @Test
     fun createDownloadRelationBetweenNonExistentUserAndMovie() {
-        val postRequest = Unirest.post("$SERVERURL/users/$userID/movies/$movieID")
-                .queryString("relation", "download")
+        val postRequest = Unirest.post("$SERVERURL/users/$userID/movies/$movieID/downloaded")
         val jsonNode = postRequest.asJson()
         val status = jsonNode.status
         val jsonObject = jsonNode.body.`object`
@@ -40,7 +39,7 @@ class RelationTest {
         movieRoutesTest.createMovie()
         movieID = movieRoutesTest.movieID!!
 
-        val postRequest = Unirest.post("$SERVERURL/users/$userID/movies/$movieID")
+        val postRequest = Unirest.post("$SERVERURL/users/$userID/movies/$movieID/downloaded")
                 .queryString("relation", "download")
         val jsonNode = postRequest.asJson()
         val status = jsonNode.status
@@ -59,8 +58,7 @@ class RelationTest {
         userRoutesTest.createUser()
         userID = userRoutesTest.userID!!
 
-        val postRequest = Unirest.post("$SERVERURL/users/$userID/movies/$movieID")
-                .queryString("relation", "download")
+        val postRequest = Unirest.post("$SERVERURL/users/$userID/movies/$movieID/downloaded")
         val jsonNode = postRequest.asJson()
         val status = jsonNode.status
         val jsonObject = jsonNode.body.`object`
@@ -82,8 +80,7 @@ class RelationTest {
         movieRoutesTest.createMovie()
         movieID = movieRoutesTest.movieID!!
 
-        val postRequest = Unirest.post("$SERVERURL/users/$userID/movies/$movieID")
-                .queryString("relation", "download")
+        val postRequest = Unirest.post("$SERVERURL/users/$userID/movies/$movieID/downloadedv")
         val jsonNode = postRequest.asJson()
         val status = jsonNode.status
         val jsonObject = jsonNode.body.`object`

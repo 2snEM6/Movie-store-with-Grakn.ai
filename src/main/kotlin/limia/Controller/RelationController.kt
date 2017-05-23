@@ -21,18 +21,18 @@ class RelationController {
 
 
     fun existsRelation(request: Request): Boolean? {
-        val relationName = request.queryParams("relation")
+        val relationName = request.params(":relation")
         val firstSplat = request.splat()[0]
         val secondSplat = request.splat()[1]
 
         if (firstSplat.equals("users") && secondSplat.equals("movies")) {
             val userID = request.params(":id0");
             val movieID = request.params(":id1");
-            if (relationName.equals("download")) {
-                return relationService.exists(relationName, userID, movieID, "downloaded_a", "is_downloaded_by");
+            if (relationName.equals("downloaded")) {
+                return relationService.exists("download", userID, movieID, "downloaded_a", "is_downloaded_by");
             }
-            if (relationName.equals("favorite")) {
-                return relationService.exists(relationName, userID, movieID, "favorited_a", "is_favorited_by");
+            if (relationName.equals("favorited")) {
+                return relationService.exists("favorite", userID, movieID, "favorited_a", "is_favorited_by");
             }
         }
         return false
@@ -50,7 +50,7 @@ class RelationController {
 
     @Throws(EntityNotFoundException::class)
     fun createRelation(request: Request): Relation? {
-        val relationName = request.queryParams("relation")
+        val relationName = request.params(":relation")
         val firstSplat = request.splat()[0]
         val secondSplat = request.splat()[1]
 
@@ -77,13 +77,13 @@ class RelationController {
                 throw entityNotFoundException
 
             if  (user != null && movie != null) {
-                if (relationName.equals("download")) {
+                if (relationName.equals("downloaded")) {
                     return relationService.create(request.params(":id0"), request.params(":id1"),
-                            "downloaded_a", "is_downloaded_by", relationName)
+                            "downloaded_a", "is_downloaded_by", "download")
                 }
-                if (relationName.equals("favorite")) {
+                if (relationName.equals("favorited")) {
                     return relationService.create(request.params(":id0"), request.params(":id1"),
-                            "favorited_a", "is_favorited_by", relationName)
+                            "favorited_a", "is_favorited_by", "favorite")
                 }
             }
         }
