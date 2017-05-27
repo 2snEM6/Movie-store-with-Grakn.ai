@@ -84,6 +84,7 @@ class RelationRoutingService : RoutingService<Relation>(), IRoutingService<Relat
             } catch(e: EntityNotFoundException) {
                 notFound = true
             }
+            //TODO handle relation exception
             if (!notFound)
                 return@delete gson.toJson(SuccessResponse(204, DELETE(type), null))
             else {

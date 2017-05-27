@@ -53,6 +53,12 @@ public class GraknEntityManager {
         return false;
     }
 
+    public boolean existsRelation(final Object id) {
+
+        Relation relation = read(Relation.class, id);
+        return relation != null;
+    }
+
     public <T> T findBy(Class<T> type, final String key, final String value) {
         DBConnection.getInstance().open();
         EntityMapper entityMapper = new EntityMapper<>(type);
