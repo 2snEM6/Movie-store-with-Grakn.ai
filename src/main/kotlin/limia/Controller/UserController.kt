@@ -5,6 +5,7 @@ import limia.Exception.EntityAlreadyExistsException
 import limia.Exception.EntityNotFoundException
 import limia.Exception.InvalidParametersException
 import limia.Service.UserService
+import org.apache.commons.validator.routines.EmailValidator
 import spark.Request
 import java.util.*
 
@@ -16,7 +17,12 @@ class UserController {
     private val userService: UserService = UserService()
 
     fun areOnCreateParametersCorrect(request: Request): Boolean {
-        return request.queryParams().contains("email") && request.queryParams().contains("name")
+        return request.queryParams().contains("email")
+                && isValidEmail(request.queryParams("email")) && request.queryParams().contains("name")
+    }
+
+    fun isValidEmail(email: String): Boolean {
+        return EmailValidator.getInstance().isValid(email)
     }
 
 

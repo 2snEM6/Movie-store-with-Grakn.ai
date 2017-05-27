@@ -80,7 +80,7 @@ class RelationTest {
         movieRoutesTest.createMovie()
         movieID = movieRoutesTest.movieID!!
 
-        val postRequest = Unirest.post("$SERVERURL/users/$userID/movies/$movieID/downloadedv")
+        val postRequest = Unirest.post("$SERVERURL/users/$userID/movies/$movieID/downloaded")
         val jsonNode = postRequest.asJson()
         val status = jsonNode.status
         val jsonObject = jsonNode.body.`object`

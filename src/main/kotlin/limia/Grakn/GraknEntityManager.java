@@ -124,6 +124,10 @@ public class GraknEntityManager {
                 entityName = "movie";
                 queryBuilder.match(var(entityName).has("identifier", id)).delete(entityName).execute();
             }
+            if (type == Relation.class) {
+                entityName = "relation";
+                queryBuilder.match(var(entityName).id(ConceptId.of(id))).delete(entityName).execute();
+            }
             graknGraph.commit();
         } catch (GraknValidationException e) {
             System.out.println("Unable to commit changes");
@@ -321,41 +325,37 @@ public class GraknEntityManager {
 
 
 
-    public <T> ArrayList<T> readAllSpecificRelations(T t) {
+    public <T> ArrayList<T> readRelationsByType(String type) {
         DBConnection.getInstance().open();
-        if (t instanceof Relation) {
-            String relationName = ((Relation) t).getRelationName();
-            ArrayList<Relation> relations = new ArrayList<>();
-            EntityMapper entityMapperEntity = new EntityMapper(limia.Dto.Entity.class);
-            MatchQuery matchQuery = queryBuilder.match(var("relation").isa(relationName));
-            for (Map<String, Concept> conceptMap : matchQuery) {
-                Relation relation = new Relation();
-                relation.setRelationName(relationName);
-                Map<RoleType, Instance> rolePlayers = conceptMap.get("relation").asRelation().rolePlayers();
-                relation.setIdentifier(conceptMap.get("relation").asRelation().getId().getValue());
-                if (rolePlayers.size() == 2) {
-                    final int[] count = {0};
-                    rolePlayers.forEach((k, v) ->{
-                        String roleType = k.getName().getValue();
-                        String rolePlayerID =
-                                ((limia.Dto.Entity)entityMapperEntity.fromEntity(v.asEntity())).getIdentifier();
-                        if (count[0] == 0) {
-                            relation.setFirstEntityID(rolePlayerID);
-                            relation.setFirstRole(roleType);
-                        }
-                        if (count[0] == 1) {
-                            relation.setSecondEntityID(rolePlayerID);
-                            relation.setSecondRole(roleType);
-                        }
-                        count[0] += 1;
-                    });
-                }
-                relations.add(relation);
+        String relationName = type;
+        ArrayList<Relation> relations = new ArrayList<>();
+        EntityMapper entityMapperEntity = new EntityMapper(limia.Dto.Entity.class);
+        MatchQuery matchQuery = queryBuilder.match(var("relation").isa(relationName));
+        for (Map<String, Concept> conceptMap : matchQuery) {
+            Relation relation = new Relation();
+            relation.setRelationName(relationName);
+            Map<RoleType, Instance> rolePlayers = conceptMap.get("relation").asRelation().rolePlayers();
+            relation.setIdentifier(conceptMap.get("relation").asRelation().getId().getValue());
+            if (rolePlayers.size() == 2) {
+                final int[] count = {0};
+                rolePlayers.forEach((k, v) ->{
+                    String roleType = k.getName().getValue();
+                    String rolePlayerID =
+                            ((limia.Dto.Entity)entityMapperEntity.fromEntity(v.asEntity())).getIdentifier();
+                    if (count[0] == 0) {
+                        relation.setFirstEntityID(rolePlayerID);
+                        relation.setFirstRole(roleType);
+                    }
+                    if (count[0] == 1) {
+                        relation.setSecondEntityID(rolePlayerID);
+                        relation.setSecondRole(roleType);
+                    }
+                    count[0] += 1;
+                });
             }
-            DBConnection.getInstance().close();
-            return (ArrayList<T>) relations;
+            relations.add(relation);
         }
         DBConnection.getInstance().close();
-        return new ArrayList<T>();
+        return (ArrayList<T>) relations;
     }
 }

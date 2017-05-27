@@ -13,6 +13,7 @@ import limia.Response.ErrorResponse
 import spark.Spark.get
 
 import spark.Spark.post
+import spark.Spark.delete
 import java.util.*
 
 /**
@@ -73,6 +74,22 @@ class RelationRoutingService : RoutingService<Relation>(), IRoutingService<Relat
             var errors = ArrayList<String>()
             errors.add(NOT_FOUND(type))
             return@get gson.toJson(ErrorResponse(404, errors = errors))
+        }
+
+        delete("/relations/id/:id") { request, repsonse ->
+            var notFound = false
+            var errors = ArrayList<String>()
+            try {
+                relationController.deleteRelationByID(request)
+            } catch(e: EntityNotFoundException) {
+                notFound = true
+            }
+            if (!notFound)
+                return@delete gson.toJson(SuccessResponse(204, DELETE(type), null))
+            else {
+                errors.add(NOT_FOUND(type))
+                return@delete gson.toJson(ErrorResponse(404, errors))
+            }
         }
 
         get("/relations/name/:name") { request, response ->

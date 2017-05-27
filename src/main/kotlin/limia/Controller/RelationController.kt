@@ -93,17 +93,16 @@ class RelationController {
     fun findAllRelationsByName(request: Request): ArrayList<Relation> {
         val relationName = request.params(":name")
         if (relationName.equals("download") || relationName.equals("favorite")) {
-            return relationService.readAllOfSpecificType(relationName)
+            return relationService.readByType(relationName)
         }
         return ArrayList()
     }
 
-    fun deleteRelation(request: Request) {
-        TODO("Not yet implemented")
+    @Throws(EntityNotFoundException::class)
+    fun deleteRelationByID(request: Request) {
+        val id = request.params(":id")
+        return relationService.deleteByID(id)
     }
 
-    fun updateRelation(request: Request) {
-        TODO("Not yet implemented")
-    }
 
 }

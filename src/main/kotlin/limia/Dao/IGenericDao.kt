@@ -16,7 +16,6 @@ interface IGenericDao<T : Any> {
 
     fun readAll(type: Class<T>): ArrayList<T>
 
-    fun readAllSpecificRelations(t: T): ArrayList<T>
 
     fun <T : Any> read(type: KClass<T>, id: Any): Any?
     fun <T : Any> delete(type: KClass<T>, id: Any)

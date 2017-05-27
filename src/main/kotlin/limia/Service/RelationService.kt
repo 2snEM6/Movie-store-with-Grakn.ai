@@ -4,6 +4,7 @@ import limia.Dao.RelationDao
 import limia.Dao.UserDao
 import limia.Dto.Relation
 import limia.Dto.User
+import limia.Exception.EntityNotFoundException
 import limia.Service.IUserService
 import java.util.*
 
@@ -25,12 +26,17 @@ class RelationService() : IRelationService {
         return dao!!.existsRelation(relationName, firstRoleplayerID, secondRoleplayerID, firstRole, secondRole)
     }
 
+    @Throws(EntityNotFoundException::class)
+    override fun deleteByID(identifier: String) {
+        return dao!!.delete(Relation::class, identifier)
+    }
+
     override fun readByID(identifier: String): Relation? {
         return dao!!.read(Relation::class, identifier as Any) as Relation?
     }
 
-    override fun readAllOfSpecificType(relationName: String): ArrayList<Relation> {
-        return dao!!.readAllSpecificRelations(Relation(null, null, relationName, null, null))
+    override fun readByType(relationName: String): ArrayList<Relation> {
+        return dao!!.readRelationsByType(relationName)
     }
 
     override fun readAll(): ArrayList<Relation> {

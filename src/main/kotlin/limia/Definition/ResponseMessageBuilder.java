@@ -1,6 +1,7 @@
 package limia.Definition;
 
 import limia.Definition.GlobalConstants.HTTPMessages;
+import limia.Dto.User;
 
 import static limia.Definition.GlobalConstants.HTTPMessages.*;
 import static limia.Definition.GlobalConstants.CRUD;
@@ -19,11 +20,14 @@ public class ResponseMessageBuilder {
     }
 
     public static String ALREADY_EXISTS(Class t) {
-        return t.getSimpleName().concat(" ").concat(ALREADY_EXISTS);
+        if (t.equals(User.class)) {
+            return "The " + t.getSimpleName().toLowerCase().concat(" ").concat(ALREADY_EXISTS).concat(" with that email");
+        }
+        return "The " + t.getSimpleName().toLowerCase().concat(" ").concat(ALREADY_EXISTS);
     }
 
     public static String BAD_REQUEST() {
-        return "Invalid or missing parameters";
+        return "Invalid, malformed or missing parameters";
     }
 
     public static String DELETE(Class t) {

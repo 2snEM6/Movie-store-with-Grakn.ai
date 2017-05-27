@@ -5,6 +5,7 @@ import limia.Dto.User
 import limia.Exception.EntityAlreadyExistsException
 import limia.Exception.EntityNotFoundException
 import limia.Service.IUserService
+import org.apache.commons.validator.routines.EmailValidator
 import java.util.*
 
 /**

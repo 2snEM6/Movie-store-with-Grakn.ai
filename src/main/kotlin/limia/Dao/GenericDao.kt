@@ -1,6 +1,5 @@
 package limia.Dao
 
-import limia.Dao.IGenericDao
 import limia.Dto.Entity
 import limia.Dto.Relation
 import limia.Exception.EntityAlreadyExistsException
@@ -63,7 +62,7 @@ abstract class GenericDao<T : Any>() : IGenericDao<T> {
 
     @Throws(EntityNotFoundException::class)
     override fun<T : Any> delete(type: KClass<T>, id: Any) {
-        if (!graknEntityManager!!.exists(Entity::class.java, id)){
+        if (type != Relation::class && !graknEntityManager!!.exists(Entity::class.java, id)){
             var e = EntityNotFoundException()
             e.addEntityType(type)
             throw e
@@ -76,8 +75,8 @@ abstract class GenericDao<T : Any>() : IGenericDao<T> {
         return graknEntityManager!!.readAll(type)
     }
 
-    override fun readAllSpecificRelations(t: T) : ArrayList<T> {
-        return graknEntityManager!!.readAllSpecificRelations(t)
+    fun readRelationsByType(type: String) : ArrayList<T> {
+        return graknEntityManager!!.readRelationsByType(type)
     }
 
     init {
