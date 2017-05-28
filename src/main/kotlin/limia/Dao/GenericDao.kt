@@ -52,6 +52,11 @@ abstract class GenericDao<T : Any>() : IGenericDao<T> {
             e.addEntityType(type)
             throw e
         }
+        if (type == Relation::class && !graknEntityManager!!.existsRelation(id)) {
+            var e = EntityNotFoundException()
+            e.addEntityType(type)
+            throw e
+        }
         return graknEntityManager!!.read(type.java, id)
     }
 

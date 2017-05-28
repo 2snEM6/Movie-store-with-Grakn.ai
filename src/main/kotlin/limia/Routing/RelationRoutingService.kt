@@ -67,8 +67,16 @@ class RelationRoutingService : RoutingService<Relation>(), IRoutingService<Relat
 
 
         get("/relations/id/:id") { request, response ->
-            val relation = relationController.readRelationByID(request.params(":id"))
-            if (relation != null) {
+
+
+            var notFound = false
+            var relation: Relation? = null
+            try {
+                relation = relationController.readRelationByID(request.params(":id"))
+            } catch(e: EntityNotFoundException) {
+                notFound = true
+            }
+            if (!notFound) {
                 return@get gson.toJson(SuccessResponse(200, READ(type), relation))
             }
             var errors = ArrayList<String>()

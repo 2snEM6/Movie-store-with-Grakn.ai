@@ -43,6 +43,7 @@ class RelationController {
         return relationService.readAll();
     }
 
+    @Throws(EntityNotFoundException::class)
     fun readRelationByID(identifier: String): Relation? {
         return relationService.readByID(identifier)
     }

@@ -31,6 +31,7 @@ class RelationService() : IRelationService {
         return dao!!.delete(Relation::class, identifier)
     }
 
+    @Throws(EntityNotFoundException::class)
     override fun readByID(identifier: String): Relation? {
         return dao!!.read(Relation::class, identifier as Any) as Relation?
     }
