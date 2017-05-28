@@ -2,13 +2,8 @@ package limia
 
 
 import com.mashape.unirest.http.Unirest
-import limia.Routing.HealthRoutingService
-import org.json.JSONObject
-import org.junit.ClassRule
 import org.junit.Test
-import spark.servlet.SparkApplication
 import kotlin.test.assertEquals
-import kotlin.test.assertNotNull
 
 class ServerConnectionTest {
 

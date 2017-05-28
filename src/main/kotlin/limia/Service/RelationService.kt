@@ -1,17 +1,14 @@
 package limia.Service
 
 import limia.Dao.RelationDao
-import limia.Dao.UserDao
 import limia.Dto.Relation
-import limia.Dto.User
 import limia.Exception.EntityNotFoundException
-import limia.Service.IUserService
 import java.util.*
 
 /**
  * Created by workstation on 05/04/2017.
  */
-class RelationService() : IRelationService {
+class RelationService : IRelationService {
 
     private var dao: RelationDao? = null
 

@@ -13,9 +13,10 @@ import kotlin.reflect.KClass
 /**
  * Created by workstation on 05/04/2017.
  */
-abstract class GenericDao<T : Any>() : IGenericDao<T> {
+@SuppressWarnings("unchecked")
+abstract class GenericDao<T : Any> : IGenericDao<T> {
 
-    private var type: Class<T>? = null
+    private var type: Class<*>? = null
     private var graknEntityManager: GraknEntityManager? = null
 
     @Throws(EntityAlreadyExistsException::class)
@@ -28,12 +29,12 @@ abstract class GenericDao<T : Any>() : IGenericDao<T> {
     }
 
     @Throws(Exception::class)
-    override fun<T : Any> existsBy(type: KClass<T>, key :String, value: String)  {
+    override fun <T : Any> existsBy(type: KClass<T>, key: String, value: String) {
         val entity = graknEntityManager!!.findBy(type.java, key, value)
         if (entity != null)
             throw EntityAlreadyExistsException()
-        else{
-            var e = EntityNotFoundException()
+        else {
+            val e = EntityNotFoundException()
             e.addEntityType(type)
             throw e
         }
@@ -45,15 +46,15 @@ abstract class GenericDao<T : Any>() : IGenericDao<T> {
     }
 
     @Throws(EntityNotFoundException::class)
-    override fun <T: Any> read(type: KClass<T>, id: Any): Any? {
+    override fun <T : Any> read(type: KClass<T>, id: Any): Any? {
 
         if (type != Relation::class && !graknEntityManager!!.exists(Entity::class.java, id)) {
-            var e = EntityNotFoundException()
+            val e = EntityNotFoundException()
             e.addEntityType(type)
             throw e
         }
         if (type == Relation::class && !graknEntityManager!!.existsRelation(id)) {
-            var e = EntityNotFoundException()
+            val e = EntityNotFoundException()
             e.addEntityType(type)
             throw e
         }
@@ -61,19 +62,19 @@ abstract class GenericDao<T : Any>() : IGenericDao<T> {
     }
 
     fun existsRelation(relationName: String, firstRoleplayerID: String, secondRolePlayerID: String,
-                                firstRole: String, secondRole: String): Boolean {
-        return graknEntityManager!!.existsRelation(relationName,firstRoleplayerID, secondRolePlayerID, firstRole, secondRole);
+                       firstRole: String, secondRole: String): Boolean {
+        return graknEntityManager!!.existsRelation(relationName, firstRoleplayerID, secondRolePlayerID, firstRole, secondRole)
     }
 
     @Throws(EntityNotFoundException::class)
-    override fun<T : Any> delete(type: KClass<T>, id: Any) {
-        if (type != Relation::class && !graknEntityManager!!.exists(Entity::class.java, id)){
-            var e = EntityNotFoundException()
+    override fun <T : Any> delete(type: KClass<T>, id: Any) {
+        if (type != Relation::class && !graknEntityManager!!.exists(Entity::class.java, id)) {
+            val e = EntityNotFoundException()
             e.addEntityType(type)
             throw e
         }
         if (type == Relation::class && !graknEntityManager!!.existsRelation(id)) {
-            var e = EntityNotFoundException()
+            val e = EntityNotFoundException()
             e.addEntityType(type)
             throw e
         }
@@ -84,15 +85,16 @@ abstract class GenericDao<T : Any>() : IGenericDao<T> {
         return graknEntityManager!!.readAll(type)
     }
 
-    fun readRelationsByType(type: String) : ArrayList<T> {
+    fun readRelationsByType(type: String): ArrayList<T> {
         return graknEntityManager!!.readRelationsByType(type)
     }
+
 
     init {
         graknEntityManager = GraknEntityManager()
         val t = javaClass.genericSuperclass
         val pt = t as ParameterizedType
-        type = pt.actualTypeArguments[0] as Class<T>
+        type = pt.actualTypeArguments[0] as Class<*>
     }
 
 

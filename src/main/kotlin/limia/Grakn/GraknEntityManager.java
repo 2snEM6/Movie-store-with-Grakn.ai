@@ -16,16 +16,16 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Map;
 
-import static ai.grakn.graql.Graql.match;
 import static ai.grakn.graql.Graql.var;
 
 /**
  * Created by workstation on 06/04/2017.
  */
+@SuppressWarnings("unchecked")
 public class GraknEntityManager {
 
-    private QueryBuilder queryBuilder;
-    private GraknGraph graknGraph;
+    private final QueryBuilder queryBuilder;
+    private final GraknGraph graknGraph;
 
 
     public GraknEntityManager() {
@@ -75,7 +75,7 @@ public class GraknEntityManager {
             first[0] = false;
         });
         DBConnection.getInstance().close();
-        return (T) type.cast(object[0]);
+        return type.cast(object[0]);
     }
 
     public <T> T persist(T t) {
@@ -121,7 +121,7 @@ public class GraknEntityManager {
     public <T> void delete(Class<T> type, final Object id) {
         DBConnection.getInstance().open();
         try {
-            String entityName = null;
+            String entityName;
             if (type == User.class) {
                 entityName = "user";
                 queryBuilder.match(var(entityName).has("identifier", id)).delete(entityName).execute();
@@ -145,9 +145,6 @@ public class GraknEntityManager {
                                  String firstRole, String secondRole) {
 
         DBConnection.getInstance().open();
-        RelationMapper relationMapper = new RelationMapper();
-
-
         MatchQuery query = queryBuilder.match(
                 var("relation").rel(firstRole, "x").rel(secondRole, "y"),
                 var("relation").isa(relationName),
@@ -158,7 +155,6 @@ public class GraknEntityManager {
                 var("y").playsRole(secondRole)).isa(relationName), var("x").has("identifier",
                 firstRoleplayerID), var("y").has("identifier", secondRoleplayerID));*/
         final boolean[] found = {false};
-        final Relation[] relation = {null};
         query.forEach(k -> {
             ai.grakn.concept.Relation graknRelation = k.get("relation").asRelation();
             found[0] = true;
@@ -182,7 +178,9 @@ public class GraknEntityManager {
                     ai.grakn.concept.Entity entity = k.get("entity").asEntity();
                     if (first[0]) {
                         _entity[0] = (limia.Dto.Entity) entityMapper.fromEntity(entity);
-                        _entity[0].setIdentifier((String) id);
+                        if (_entity[0] != null) {
+                            _entity[0].setIdentifier((String) id);
+                        }
                     }
                     first[0] = false;
                 });
@@ -202,7 +200,9 @@ public class GraknEntityManager {
                     ai.grakn.concept.Entity entity = k.get("user").asEntity();
                     if (first[0]) {
                         user[0] = (User) entityMapper.fromEntity(entity);
-                        user[0].setIdentifier((String) id);
+                        if (user[0] != null) {
+                            user[0].setIdentifier((String) id);
+                        }
                     }
                     first[0] = false;
                 });
@@ -221,7 +221,9 @@ public class GraknEntityManager {
                     Entity entity = k.get("movie").asEntity();
                     if (first[0]) {
                         movie[0] = (Movie) entityMapper.fromEntity(entity);
-                        movie[0].setIdentifier((String) id);
+                        if (movie[0] != null) {
+                            movie[0].setIdentifier((String) id);
+                        }
                     }
                     first[0] = false;
                 });
@@ -236,8 +238,10 @@ public class GraknEntityManager {
                 query.forEach(k -> {
                     ai.grakn.concept.Relation graknRelation = k.get("relation").asRelation();
                     if (first[0]) {
-                        relation[0] = (Relation) relationMapper.fromRelation(graknRelation);// TODO: 21/05/2017 Map the relation
-                        relation[0].setIdentifier((String) id);
+                        relation[0] = relationMapper.fromRelation(graknRelation);// TODO: 21/05/2017 Map the relation
+                        if (relation[0] != null) {
+                            relation[0].setIdentifier((String) id);
+                        }
                     }
                     first[0] = false;
                 });
@@ -254,7 +258,7 @@ public class GraknEntityManager {
 
     public <T> T update(T t) {
         DBConnection.getInstance().open();
-        String id = null;
+        String id;
         try {
             id = null;
             if (t instanceof User) {
@@ -262,9 +266,8 @@ public class GraknEntityManager {
                 MatchQuery matchQuery = queryBuilder.match(var("user").has("identifier", ((User) t).getIdentifier()));
                 Collection<Var> collection = new ArrayList<>();
                 EntityMapper entityMapper = new EntityMapper<>(User.class);
-                entityMapper.extractNonNullFields(t).forEach((name, value) -> {
-                    collection.add(var("user").has((String) name, value));
-                });
+                entityMapper.extractNonNullFields(t).forEach((name, value) ->
+                        collection.add(var("user").has((String) name, value)));
                 matchQuery.insert(collection).execute();
             }
             graknGraph.commit();
@@ -280,6 +283,7 @@ public class GraknEntityManager {
         DBConnection.getInstance().open();
         if (type == User.class) {
             ArrayList<User> users = new ArrayList<>();
+            //noinspection unchecked
             EntityMapper entityMapper = new EntityMapper(User.class);
             MatchQuery matchQuery = queryBuilder.match(var("user").isa("user"));
             for (Map<String, Concept> conceptMap : matchQuery) {
@@ -295,12 +299,8 @@ public class GraknEntityManager {
             ArrayList<Relation> relations = new ArrayList<>();
             RelationMapper relationMapper = new RelationMapper();
             MatchQuery matchQuery = queryBuilder.match(var("relation").sub("relation"));
-
             ArrayList<String> relationNames = new ArrayList<>();
-
-            matchQuery.forEach(concept -> {
-                relationNames.add(concept.get("relation").asType().getName().getValue());
-            });
+            matchQuery.forEach(concept -> relationNames.add(concept.get("relation").asType().getName().getValue()));
             relationNames.forEach(relationName -> {
                 if (!relationName.equals("relation")) {
                     MatchQuery _matchQuery = queryBuilder.match(var("relation").isa(relationName));
@@ -316,6 +316,7 @@ public class GraknEntityManager {
         }
         if (type == Movie.class) {
             ArrayList<Movie> movies = new ArrayList<>();
+            //noinspection unchecked
             EntityMapper entityMapper = new EntityMapper(Movie.class);
             MatchQuery matchQuery = queryBuilder.match(var("movie").isa("movie"));
             for (Map<String, Concept> conceptMap : matchQuery) {
@@ -333,30 +334,33 @@ public class GraknEntityManager {
 
     public <T> ArrayList<T> readRelationsByType(String type) {
         DBConnection.getInstance().open();
-        String relationName = type;
         ArrayList<Relation> relations = new ArrayList<>();
+        //noinspection unchecked
         EntityMapper entityMapperEntity = new EntityMapper(limia.Dto.Entity.class);
-        MatchQuery matchQuery = queryBuilder.match(var("relation").isa(relationName));
+        MatchQuery matchQuery = queryBuilder.match(var("relation").isa(type));
         for (Map<String, Concept> conceptMap : matchQuery) {
             Relation relation = new Relation();
-            relation.setRelationName(relationName);
+            relation.setRelationName(type);
             Map<RoleType, Instance> rolePlayers = conceptMap.get("relation").asRelation().rolePlayers();
             relation.setIdentifier(conceptMap.get("relation").asRelation().getId().getValue());
             if (rolePlayers.size() == 2) {
                 final int[] count = {0};
                 rolePlayers.forEach((k, v) ->{
                     String roleType = k.getName().getValue();
-                    String rolePlayerID =
-                            ((limia.Dto.Entity)entityMapperEntity.fromEntity(v.asEntity())).getIdentifier();
-                    if (count[0] == 0) {
-                        relation.setFirstEntityID(rolePlayerID);
-                        relation.setFirstRole(roleType);
+
+                    limia.Dto.Entity entity = (limia.Dto.Entity) entityMapperEntity.fromEntity(v.asEntity());
+                    if (entity != null) {
+                        String rolePlayerID = entity.getIdentifier();
+                        if (count[0] == 0) {
+                            relation.setFirstEntityID(rolePlayerID);
+                            relation.setFirstRole(roleType);
+                        }
+                        if (count[0] == 1) {
+                            relation.setSecondEntityID(rolePlayerID);
+                            relation.setSecondRole(roleType);
+                        }
+                        count[0] += 1;
                     }
-                    if (count[0] == 1) {
-                        relation.setSecondEntityID(rolePlayerID);
-                        relation.setSecondRole(roleType);
-                    }
-                    count[0] += 1;
                 });
             }
             relations.add(relation);

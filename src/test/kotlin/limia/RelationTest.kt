@@ -35,7 +35,7 @@ class RelationTest {
 
     @Test
     fun createDownloadRelationBetweenNonExistentUserAndExistentMovie() {
-        var movieRoutesTest = MovieRoutesTest()
+        val movieRoutesTest = MovieRoutesTest()
         movieRoutesTest.createMovie()
         movieID = movieRoutesTest.movieID!!
 
@@ -54,7 +54,7 @@ class RelationTest {
 
     @Test
     fun createDownloadRelationBetweenExistentUserAndNonExistentMovie() {
-        var userRoutesTest = UserRoutesTest()
+        val userRoutesTest = UserRoutesTest()
         userRoutesTest.createUser()
         userID = userRoutesTest.userID!!
 
@@ -72,11 +72,11 @@ class RelationTest {
 
     @Test
     fun createDownloadRelationBetweenExistentUserAndExistentMovie() {
-        var userRoutesTest = UserRoutesTest()
+        val userRoutesTest = UserRoutesTest()
         userRoutesTest.createUser()
         userID = userRoutesTest.userID!!
 
-        var movieRoutesTest = MovieRoutesTest()
+        val movieRoutesTest = MovieRoutesTest()
         movieRoutesTest.createMovie()
         movieID = movieRoutesTest.movieID!!
 

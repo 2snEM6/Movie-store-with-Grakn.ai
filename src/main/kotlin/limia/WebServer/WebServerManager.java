@@ -1,15 +1,13 @@
 package limia.WebServer;
 
-import com.google.gson.Gson;
 import limia.Routing.RoutingService;
-import spark.Filter;
 
 import static spark.Spark.*;
 
 /**
  * Created by macbook on 8/4/17.
  */
-public class WebServerManager {
+class WebServerManager {
 
     public static void start(int port) {
         port(port);

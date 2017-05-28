@@ -41,6 +41,21 @@ class MovieRoutesTest {
     }
 
     @Test
+    fun createMovieWithMissingParams() {
+        themoviedbID = UUID.randomUUID().toString()
+        val postRequest = Unirest.post(SERVERURL + "/movies")
+        val jsonNode = postRequest.asJson()
+        val status = jsonNode.status
+        val jsonObject = jsonNode.body.`object`
+        assertEquals(200, status)
+        assertEquals(400, jsonObject.getInt("code"))
+        assertNotNull(jsonObject)
+        assertNotNull(jsonObject.getJSONArray("errors"))
+        assertEquals(jsonObject.getJSONArray("errors").contains("Invalid, malformed or missing parameters"), true)
+        assertEquals(jsonObject.getJSONArray("errors").length(), 1)
+    }
+
+    @Test
     fun createExistingMovieByTheMovieDbID() {
         createMovie()
         val postRequest = Unirest.post(SERVERURL + "/movies")
@@ -51,7 +66,7 @@ class MovieRoutesTest {
         assertEquals(200, status)
         assertEquals(409, jsonObject.getInt("code"))
         assertNotNull(jsonObject.getJSONArray("errors"))
-        assertEquals(jsonObject.getJSONArray("errors").contains("Movie already exists"), true)
+        assertEquals(jsonObject.getJSONArray("errors").contains("The movie already exists"), true)
         assertEquals(jsonObject.getJSONArray("errors").length(), 1)
     }
 

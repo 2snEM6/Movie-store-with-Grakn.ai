@@ -45,7 +45,7 @@ class UserRoutesTest {
         assertNotNull(jsonObject.getJSONObject("data").getString("identifier"))
         userID = jsonObject.getJSONObject("data").getString("identifier")
         assertEquals(jsonObject.getString("message"), "User created")
-        println(tag + " ID: $userID email: $email name: $name")
+        println("$tag ID: $userID email: $email name: $name")
     }
 
     @Test
@@ -61,7 +61,7 @@ class UserRoutesTest {
         assertEquals(400, jsonObject.getInt("code"))
         assertNotNull(jsonObject)
         assertNotNull(jsonObject.getJSONArray("errors"))
-        assertEquals(jsonObject.getJSONArray("errors").contains("Invalid or missing parameters"), true)
+        assertEquals(jsonObject.getJSONArray("errors").contains("Invalid, malformed or missing parameters"), true)
         assertEquals(jsonObject.getJSONArray("errors").length(), 1)
     }
 
@@ -80,7 +80,7 @@ class UserRoutesTest {
         assertEquals(409, jsonObject.getInt("code"))
         assertNotNull(jsonObject)
         assertNotNull(jsonObject.getJSONArray("errors"))
-        assertEquals(jsonObject.getJSONArray("errors").contains("User already exists"), true)
+        assertEquals(jsonObject.getJSONArray("errors").contains("The user already exists with that email"), true)
         assertEquals(jsonObject.getJSONArray("errors").length(), 1)
     }
 
@@ -102,7 +102,7 @@ class UserRoutesTest {
 
     @Test
     fun getNonExistingUser() {
-        val randomID = UUID.randomUUID().toString();
+        val randomID = UUID.randomUUID().toString()
         val getRequest = Unirest.get(SERVERURL + "/users/" + randomID)
         val jsonNode = getRequest.asJson()
         val status = jsonNode.status

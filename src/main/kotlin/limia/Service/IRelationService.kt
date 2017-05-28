@@ -1,7 +1,6 @@
 package limia.Service
 
 import limia.Dto.Relation
-import limia.Dto.User
 import java.util.*
 
 /**
@@ -12,7 +11,7 @@ interface IRelationService {
     fun create(firstEntityID: String, secondEntityID: String, firstEntityRole: String, secondEntityRole: String,
                relationName: String): Relation
 
-    fun readByType(relationName : String): ArrayList<Relation>;
+    fun readByType(relationName : String): ArrayList<Relation>
     fun exists(relationName: String, firstRoleplayerID: String, secondRoleplayerID: String, firstRole: String,
                secondRole: String): Boolean?
 

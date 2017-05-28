@@ -1,7 +1,5 @@
 package limia.Dao
 
-import limia.Exception.EntityAlreadyExistsException
-import limia.Exception.EntityNotFoundException
 import java.util.*
 import kotlin.reflect.KClass
 
@@ -11,13 +9,14 @@ import kotlin.reflect.KClass
 interface IGenericDao<T : Any> {
 
     fun create(t: T): T?
-    
+
     fun update(t: T): T
 
     fun readAll(type: Class<T>): ArrayList<T>
 
-
     fun <T : Any> read(type: KClass<T>, id: Any): Any?
+
     fun <T : Any> delete(type: KClass<T>, id: Any)
+
     fun <T : Any> existsBy(type: KClass<T>, key: String, value: String)
 }

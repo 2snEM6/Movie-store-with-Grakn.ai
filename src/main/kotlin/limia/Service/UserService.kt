@@ -4,14 +4,12 @@ import limia.Dao.UserDao
 import limia.Dto.User
 import limia.Exception.EntityAlreadyExistsException
 import limia.Exception.EntityNotFoundException
-import limia.Service.IUserService
-import org.apache.commons.validator.routines.EmailValidator
 import java.util.*
 
 /**
  * Created by workstation on 05/04/2017.
  */
-class UserService() : IUserService {
+class UserService : IUserService {
 
     private var dao: UserDao? = null
 

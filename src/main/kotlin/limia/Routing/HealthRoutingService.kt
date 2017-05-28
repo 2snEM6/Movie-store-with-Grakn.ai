@@ -8,7 +8,7 @@ import spark.Spark.*
 class HealthRoutingService : RoutingService<Any>(), IRoutingService<Any> {
 
     override fun initializeRoutes() {
-        get("/alive") { req, res ->
+        get("/alive") { _, _ ->
             gson.toJson(SuccessResponse(200,"I am alive", null))
         }
     }

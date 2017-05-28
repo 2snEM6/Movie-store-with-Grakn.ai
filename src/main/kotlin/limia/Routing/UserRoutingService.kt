@@ -1,10 +1,14 @@
 package limia.Routing
 
-import com.google.gson.Gson
-import limia.Controller.MovieController
-import limia.Controller.RelationController
 import limia.Controller.UserController
-import limia.Definition.ResponseMessageBuilder.*;
+import limia.Definition.ResponseMessageBuilder.Companion.ALREADY_EXISTS
+import limia.Definition.ResponseMessageBuilder.Companion.BAD_REQUEST
+import limia.Definition.ResponseMessageBuilder.Companion.CREATE
+import limia.Definition.ResponseMessageBuilder.Companion.DELETE
+import limia.Definition.ResponseMessageBuilder.Companion.NOT_FOUND
+import limia.Definition.ResponseMessageBuilder.Companion.READ
+import limia.Definition.ResponseMessageBuilder.Companion.READ_ALL
+import limia.Definition.ResponseMessageBuilder.Companion.UPDATE
 import limia.Dto.User
 import limia.Exception.EntityAlreadyExistsException
 import limia.Exception.EntityNotFoundException
@@ -16,8 +20,8 @@ import java.util.*
 
 
 /**
- * Created by macbook on 8/4/17.
- */
+* Created by macbook on 8/4/17.
+*/
 class UserRoutingService : RoutingService<User>(), IRoutingService<User> {
 
     private var userController: UserController = UserController()
@@ -25,17 +29,17 @@ class UserRoutingService : RoutingService<User>(), IRoutingService<User> {
     override fun initializeRoutes() {
 
         path("/users") {
-            post("") { req, res ->
+            post("") { req, _ ->
                 var user: User? = null
-                var errors = ArrayList<String>()
-                var alreadyExists = false;
-                var invalidParams = false;
+                val errors = ArrayList<String>()
+                var alreadyExists = false
+                var invalidParams = false
                 try {
-                    user = userController?.createUser(req)
+                    user = userController.createUser(req)
                 } catch(e: EntityAlreadyExistsException) {
-                    alreadyExists = true;
+                    alreadyExists = true
                 } catch (e: InvalidParametersException) {
-                    invalidParams = true;
+                    invalidParams = true
                 }
                 val errorsPresent = alreadyExists or invalidParams
 
@@ -52,18 +56,18 @@ class UserRoutingService : RoutingService<User>(), IRoutingService<User> {
                 return@post gson.toJson(SuccessResponse(201, CREATE(type), user))
             }
 
-            get("") { req, res ->
-                val users : ArrayList<User> = userController?.readAllUsers()
+            get("") { _, _ ->
+                val users: ArrayList<User> = userController.readAllUsers()
                 gson.toJson(SuccessResponse(200, READ_ALL(type), users))
             }
 
 
-            get("/:id") { req, res ->
+            get("/:id") { req, _ ->
                 var user: User? = null
                 var notFound = false
-                var errors = ArrayList<String>()
+                val errors = ArrayList<String>()
                 try {
-                    user = userController?.findUser(req)
+                    user = userController.findUser(req)
                 } catch(e: EntityNotFoundException) {
                     notFound = true
                 }
@@ -75,16 +79,16 @@ class UserRoutingService : RoutingService<User>(), IRoutingService<User> {
                 }
             }
 
-            put("/:id") { req, res ->
-                userController?.updateUser(req)
+            put("/:id") { req, _ ->
+                userController.updateUser(req)
                 gson.toJson(SuccessResponse(200, UPDATE(type), null))
             }
 
-            delete("/:id") { req, res ->
+            delete("/:id") { req, _ ->
                 var notFound = false
-                var errors = ArrayList<String>()
+                val errors = ArrayList<String>()
                 try {
-                    userController?.deleteUser(req)
+                    userController.deleteUser(req)
                 } catch(e: EntityNotFoundException) {
                     notFound = true
                 }

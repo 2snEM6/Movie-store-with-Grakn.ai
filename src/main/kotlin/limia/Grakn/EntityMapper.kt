@@ -1,34 +1,25 @@
 package limia.Grakn
 
 import ai.grakn.concept.Entity
-import ai.grakn.concept.Resource
-import com.google.gson.Gson
-import limia.Dto.User
-
 import java.lang.reflect.Field
-import java.lang.reflect.ParameterizedType
-import java.lang.reflect.Type
 import java.util.HashMap
-import org.apache.tinkerpop.gremlin.structure.T
-
 
 
 /**
  * Created by macbook on 8/4/17.
  */
-class EntityMapper<T : Any>(protected var type: Class<T>) : IEntityMapper<T> {
+open class EntityMapper<T : Any>(protected var type: Class<T>) : IEntityMapper<T> {
 
 
     fun getField(clazz: Class<*>?, name: String): Field? {
-        var clazz = clazz
+        var type = clazz
         var field: Field? = null
-        while (clazz != null && field == null) {
+        while (type != null && field == null) {
             try {
-                field = clazz.getDeclaredField(name)
+                field = type.getDeclaredField(name)
             } catch (e: Exception) {
             }
-
-            clazz = clazz.superclass
+            type = type.superclass
         }
         return field
     }
@@ -64,7 +55,7 @@ class EntityMapper<T : Any>(protected var type: Class<T>) : IEntityMapper<T> {
 
         for (resource in entity.resources()) {
             val resourceName = resource.type().name.toString()
-            var field = getField(type, resourceName)
+            val field = getField(type, resourceName)
             if (field != null) {
                 val fieldName = field.name
                 if (resourceName == fieldName) {

@@ -25,14 +25,14 @@ class RelationController {
         val firstSplat = request.splat()[0]
         val secondSplat = request.splat()[1]
 
-        if (firstSplat.equals("users") && secondSplat.equals("movies")) {
-            val userID = request.params(":id0");
-            val movieID = request.params(":id1");
-            if (relationName.equals("downloaded")) {
-                return relationService.exists("download", userID, movieID, "downloaded_a", "is_downloaded_by");
+        if (firstSplat == "users" && secondSplat == "movies") {
+            val userID = request.params(":id0")
+            val movieID = request.params(":id1")
+            if (relationName == "downloaded") {
+                return relationService.exists("download", userID, movieID, "downloaded_a", "is_downloaded_by")
             }
-            if (relationName.equals("favorited")) {
-                return relationService.exists("favorite", userID, movieID, "favorited_a", "is_favorited_by");
+            if (relationName == "favorited") {
+                return relationService.exists("favorite", userID, movieID, "favorited_a", "is_favorited_by")
             }
         }
         return false
@@ -40,7 +40,7 @@ class RelationController {
 
 
     fun readAll(): ArrayList<Relation> {
-        return relationService.readAll();
+        return relationService.readAll()
     }
 
     @Throws(EntityNotFoundException::class)
@@ -55,17 +55,17 @@ class RelationController {
         val firstSplat = request.splat()[0]
         val secondSplat = request.splat()[1]
 
-        if (firstSplat.equals("users") && secondSplat.equals("movies")) {
+        if (firstSplat == "users" && secondSplat == "movies") {
             var user: User? = null
             var throwNotFoundException = false
-            var entityNotFoundException = EntityNotFoundException()
+            val entityNotFoundException = EntityNotFoundException()
             try {
                 user = userService.read(request.params(":id0"))
             } catch(e: EntityNotFoundException) {
                 throwNotFoundException = true
                 entityNotFoundException.types.add(User::class)
             }
-            
+
             var movie: Movie? = null
             try {
                 movie = movieService.read(request.params(":id1"))
@@ -77,12 +77,12 @@ class RelationController {
             if (throwNotFoundException)
                 throw entityNotFoundException
 
-            if  (user != null && movie != null) {
-                if (relationName.equals("downloaded")) {
+            if (user != null && movie != null) {
+                if (relationName == "downloaded") {
                     return relationService.create(request.params(":id0"), request.params(":id1"),
                             "downloaded_a", "is_downloaded_by", "download")
                 }
-                if (relationName.equals("favorited")) {
+                if (relationName == "favorited") {
                     return relationService.create(request.params(":id0"), request.params(":id1"),
                             "favorited_a", "is_favorited_by", "favorite")
                 }
@@ -93,7 +93,7 @@ class RelationController {
 
     fun findAllRelationsByName(request: Request): ArrayList<Relation> {
         val relationName = request.params(":name")
-        if (relationName.equals("download") || relationName.equals("favorite")) {
+        if (relationName == "download" || relationName == "favorite") {
             return relationService.readByType(relationName)
         }
         return ArrayList()

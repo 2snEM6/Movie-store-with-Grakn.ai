@@ -1,6 +1,6 @@
 package limia.Dao
 
-import limia.Dao.IGenericDao
+
 import limia.Dto.User
 
 /**

@@ -24,7 +24,7 @@ public class DBConnection {
         return instance;
     }
 
-    public boolean isServerRunning() {
+    private boolean isServerRunning() {
         return Client.serverIsRunning(Grakn.DEFAULT_URI);
     }
 

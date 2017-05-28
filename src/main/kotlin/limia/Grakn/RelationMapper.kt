@@ -11,32 +11,32 @@ class RelationMapper {
 
 
     fun getField(clazz: Class<*>?, name: String): Field? {
-        var clazz = clazz
+        var type = clazz
         var field: Field? = null
-        while (clazz != null && field == null) {
+        while (type != null && field == null) {
             try {
-                field = clazz.getDeclaredField(name)
+                field = type.getDeclaredField(name)
             } catch (e: Exception) {
             }
 
-            clazz = clazz.superclass
+            type = type.superclass
         }
         return field
     }
 
     fun fromRelation(relation: Relation): limia.Dto.Relation? {
 
-        var roleTypeNames = ArrayList<String>()
-        var roleTypeIDs = ArrayList<String>()
+        val roleTypeNames = ArrayList<String>()
+        val roleTypeIDs = ArrayList<String>()
 
-        var _relation = limia.Dto.Relation()
+        val _relation = limia.Dto.Relation()
         _relation.relationName = relation.type().name.value
-        var map = relation.rolePlayers()
+        val map = relation.rolePlayers()
 
         map.forEach { entry ->
             roleTypeNames.add(entry.key.name.value)
             entry.value.asEntity().resources().forEach { resource ->
-                if (resource.type().name.value.equals("identifier")) {
+                if (resource.type().name.value == "identifier") {
                     roleTypeIDs.add(resource.value.toString())
                 }
             }

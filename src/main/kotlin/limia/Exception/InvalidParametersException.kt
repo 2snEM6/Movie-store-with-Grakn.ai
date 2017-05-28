@@ -9,14 +9,23 @@ class InvalidParametersException : Exception {
 
     var parameters: ArrayList<String>? = null
 
-    constructor() {}
+    fun addParameter(parameter: String) {
+        if (parameters == null){
+            parameters = ArrayList<String>()
+        } else {
+            parameters!!.add(parameter)
+        }
 
-    constructor(message: String) : super(message) {}
+    }
 
-    constructor(message: String, cause: Throwable) : super(message, cause) {}
+    constructor()
 
-    constructor(cause: Throwable) : super(cause) {}
+    constructor(message: String) : super(message)
+
+    constructor(message: String, cause: Throwable) : super(message, cause)
+
+    constructor(cause: Throwable) : super(cause)
 
     constructor(message: String, cause: Throwable, enableSuppression: Boolean, writableStackTrace: Boolean) :
-            super(message, cause, enableSuppression, writableStackTrace) {}
+            super(message, cause, enableSuppression, writableStackTrace)
 }

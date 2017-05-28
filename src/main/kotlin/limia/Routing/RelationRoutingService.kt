@@ -1,17 +1,19 @@
 package limia.Routing
 
-import limia.Controller.MovieController
 import limia.Controller.RelationController
-import limia.Controller.UserController
-import limia.Definition.GlobalConstants
 import limia.Dto.Relation
 import limia.Response.SuccessResponse
-import limia.Definition.GlobalConstants.CRUD.*;
-import limia.Definition.ResponseMessageBuilder.*
+import limia.Definition.GlobalConstants.CRUD.*
+import limia.Definition.ResponseMessageBuilder.Companion.NOT_FOUND
+import limia.Definition.ResponseMessageBuilder.Companion.NOT_FOUND_ALL
+import limia.Definition.ResponseMessageBuilder.Companion.EXISTS
+import limia.Definition.ResponseMessageBuilder.Companion.READ_ALL
+import limia.Definition.ResponseMessageBuilder.Companion.READ
+import limia.Definition.ResponseMessageBuilder.Companion.DELETE
+import limia.Definition.ResponseMessageBuilder.Companion.CREATE
 import limia.Exception.EntityNotFoundException
 import limia.Response.ErrorResponse
 import spark.Spark.get
-
 import spark.Spark.post
 import spark.Spark.delete
 import java.util.*
@@ -21,32 +23,30 @@ import java.util.*
  */
 class RelationRoutingService : RoutingService<Relation>(), IRoutingService<Relation> {
 
-    private var userController: UserController = UserController()
-    private var movieController: MovieController = MovieController()
     private var relationController: RelationController = RelationController()
 
     override fun initializeRoutes() {
-        post("/*/:id0/*/:id1/:relation") post@ { request, response ->
-            var relation: Relation? = null
+        post("/*/:id0/*/:id1/:relation") post@ { request, _ ->
+            val relation: Relation?
             try {
                 relation = relationController.createRelation(request)
             } catch(e: EntityNotFoundException) {
-                var errorResponse = ErrorResponse()
+                val errorResponse = ErrorResponse()
                 errorResponse.code = 404
                 e.types.forEach { k ->
-                    errorResponse.errors.add(NOT_FOUND(k.java, READ))
+                    errorResponse.errors.add(NOT_FOUND(k.java, READ)!!)
                 }
                 return@post gson.toJson(errorResponse)
             }
             gson.toJson(SuccessResponse(201, CREATE(type), relation))
         }
 
-        get("/*/:id0/*/:id1/:relation") post@ { request, response ->
-            var exists: Boolean = relationController.existsRelation(request)!!
+        get("/*/:id0/*/:id1/:relation") post@ { request, _ ->
+            val exists: Boolean = relationController.existsRelation(request)!!
             if (!exists){
-                var errorResponse = ErrorResponse()
+                val errorResponse = ErrorResponse()
                 errorResponse.code = 404
-                errorResponse.errors.add(NOT_FOUND(Relation::class.java, READ))
+                errorResponse.errors.add(NOT_FOUND(Relation::class.java, READ)!!)
                 return@post gson.toJson(errorResponse)
             }
             gson.toJson(SuccessResponse(200, EXISTS(type), null))
@@ -54,21 +54,19 @@ class RelationRoutingService : RoutingService<Relation>(), IRoutingService<Relat
 
 
 
-        get("/relations") { request, response ->
+        get("/relations") { _, _ ->
             val relations = relationController.readAll()
 
             if (relations.isEmpty()) {
-                var errors = ArrayList<String>()
-                errors.add(NOT_FOUND_ALL(type, READ))
+                val errors = ArrayList<String>()
+                errors.add(NOT_FOUND_ALL(type, READ)!!)
                 return@get gson.toJson(ErrorResponse(404, errors))
             }
             return@get gson.toJson(SuccessResponse(200, READ_ALL(type), relations))
         }
 
 
-        get("/relations/id/:id") { request, response ->
-
-
+        get("/relations/id/:id") { request, _ ->
             var notFound = false
             var relation: Relation? = null
             try {
@@ -79,14 +77,14 @@ class RelationRoutingService : RoutingService<Relation>(), IRoutingService<Relat
             if (!notFound) {
                 return@get gson.toJson(SuccessResponse(200, READ(type), relation))
             }
-            var errors = ArrayList<String>()
+            val errors = ArrayList<String>()
             errors.add(NOT_FOUND(type))
             return@get gson.toJson(ErrorResponse(404, errors = errors))
         }
 
-        delete("/relations/id/:id") { request, repsonse ->
+        delete("/relations/id/:id") { request, _ ->
             var notFound = false
-            var errors = ArrayList<String>()
+            val errors = ArrayList<String>()
             try {
                 relationController.deleteRelationByID(request)
             } catch(e: EntityNotFoundException) {
@@ -101,12 +99,12 @@ class RelationRoutingService : RoutingService<Relation>(), IRoutingService<Relat
             }
         }
 
-        get("/relations/name/:name") { request, response ->
+        get("/relations/name/:name") { request, _ ->
             val relations = relationController.findAllRelationsByName(request)
-            var jsonBody : String?
+            val jsonBody : String?
             if (relations.isEmpty()) {
-                var errors = ArrayList<String>()
-                errors.add(NOT_FOUND_ALL(type, READ))
+                val errors = ArrayList<String>()
+                errors.add(NOT_FOUND_ALL(type, READ)!!)
                 jsonBody = gson.toJson(ErrorResponse(404, errors = errors))
             }
             else jsonBody = gson.toJson(SuccessResponse(200, READ_ALL(type), relations))
